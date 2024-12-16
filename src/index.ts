@@ -302,7 +302,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     } else {
       console.log(`\x1b[31m[   ] ANT Process Identified\x1b[0m`);
       console.log(`\x1b[31m[   ] ANT Process:\x1b[0m Not configured`);
-      console.log(`\n\x1b[33mThe ANT isn't required to deploy your app onto Arweave, but you should understand that your app's url will look something like (\x1b[31mhttps://arweave.net/[very-long-hash]\x1b[33m) rather than something like \x1b[35mhttps://permalaunch.ar.io\x1b[33m.\n`);
+      console.log(`\n\x1b[33mThe ANT isn't required to deploy your app onto Arweave, but you should understand that your app's url will look something like (\x1b[31mhttps://arweave.net/[very-long-hash]\x1b[33m) rather than something like (\x1b[35mhttps://permalaunch.ar.io\x1b[33m).\n`);
       console.log(`\x1b[33mIf your interested in getting an ARNS domain for your app, then go \x1b[35mhttps://arns.app/\x1b[33m to get your own.\n`);
       console.log(`\x1b[33mIf you want to learn more about ANTs and ARNS domains, then head over to \x1b[35mhttps://docs.ar.io/\x1b[33m\x1b[0m`);
     }
