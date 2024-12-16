@@ -72,6 +72,11 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run ANT-specific checks only',
     default: false
   })
+  .option('check-git', {
+    type: 'boolean',
+    description: 'Run git-specific checks only',
+    default: false
+  })
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -273,6 +278,38 @@ async function getDeploymentCost(buildFolder: string): Promise<string> {
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Add new section for GIT checks (both in prelaunch-checklist and as standalone)
+const checkGit = async () => {
+  process.stdout.write('\n\x1b[33mCHECKING GIT...\x1b[0m');
+  await delay(2000);
+  
+  // Clear the "CHECKING GIT..." line
+  process.stdout.clearLine(0);
+  process.stdout.cursorTo(0);
+  
+  console.log('\n\x1b[35mCHECK GIT:\x1b[0m');
+  const gitHash = process.env.GITHUB_SHA;
+  if (gitHash) {
+    console.log(`\x1b[32m[ x ] GIT-HASH Identified\x1b[0m`);
+    console.log(`\x1b[32m[ x ] GIT-HASH:\x1b[0m ${gitHash}`);
+  } else {
+    console.log(`\x1b[31m[   ] GIT-HASH Identified\x1b[0m`);
+    console.log(`\x1b[31m[   ] GIT-HASH:\x1b[0m Not configured`);
+    console.log(`\n\x1b[33mConfiguring a GIT-HASH isn't required for deploying your app onto Arweave. This variable is only required if you want to set up automatic redeployments every time you push a new commit to the github repo. To learn more about how to do this, go to \x1b[35mhttps://permalaunch.ar.io/docs\x1b[33m.\x1b[0m\n`);
+  }
+
+  // Add github.yaml check
+  const githubYamlExists = fs.existsSync('./github.yaml');
+  if (githubYamlExists) {
+    console.log(`\x1b[32m[ x ] GitHub Workflow File Identified\x1b[0m`);
+  } else {
+    console.log(`\x1b[31m[   ] GitHub Workflow File Identified\x1b[0m`);
+    if (!gitHash) {
+      console.log(`\x1b[33mA github.yaml file is required for automatic deployments. You can find an example configuration at \x1b[35mhttps://permalaunch.ar.io/docs\x1b[33m.\x1b[0m`);
+    }
+  }
+};
+
 (async () => {
   if (argv['prelaunch-checklist']) {
     console.log('\n\x1b[35mPERMALAUNCH PRELAUNCH CHECKLIST INITIATED\x1b[0m\n');
@@ -393,6 +430,8 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       console.log(`\x1b[33mIf you want to learn more about ANTs and ARNS domains, then head over to \x1b[35mhttps://docs.ar.io/\x1b[33m\x1b[0m`);
     }
     
+    // After ANT checks
+    await checkGit();
     return;
   }
 
@@ -526,6 +565,11 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     return;
   }
 
+  if (argv['check-git']) {
+    await checkGit();
+    return;
+  }
+
   if (!DEPLOY_KEY) {
     console.error('DEPLOY_KEY not configured');
     return;
@@ -589,7 +633,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     }
   }
 
-  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances'] && !argv['check-build'] && !argv['check-ant']) {
+  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances'] && !argv['check-build'] && !argv['check-ant'] && !argv['check-git']) {
     console.log('Please specify either --launch, --prelaunch-checklist, or --check-wallet flag');
     return;
   }
