@@ -14,6 +14,7 @@ import { DeployArgs } from './types.js';
 import TurboDeploy from './turbo/index.js';
 
 const argv = yargs(hideBin(process.argv))
+  .usage('\n\x1b[35mPERMALAUNCH CLI\x1b[0m - Deploy your web apps to the permaweb with ease!\n')
   .option('ant-process', {
     alias: 'a',
     type: 'string',
@@ -24,26 +25,24 @@ const argv = yargs(hideBin(process.argv))
     alias: 'd',
     type: 'string',
     description: 'Folder to deploy (defaults to checking ./dist, ./build, or ./.next in that order)',
-    coerce: (arg) => {
-      if (arg && arg !== './dist') return arg;
-      
-      const commonFolders = ['./dist', './build', './.next'];
-      const existingFolder = commonFolders.find(folder => fs.existsSync(folder));
-      
-      return existingFolder || './dist';
-    },
     default: './dist'
   })
   .option('undername', {
     alias: 'u',
     type: 'string',
-    description: 'ANT undername to update.',
-    default: '@',
+    description: 'ANT undername to update',
+    default: '@'
   })
   .option('launch', {
     alias: 'l',
     type: 'boolean',
     description: 'Launch the deployment process',
+    default: false
+  })
+  .option('quick-launch', {
+    alias: 'q',
+    type: 'boolean',
+    description: 'Launch deployment process without checks or countdown',
     default: false
   })
   .option('prelaunch-checklist', {
@@ -53,8 +52,8 @@ const argv = yargs(hideBin(process.argv))
     default: false
   })
   .option('check-wallet', {
-    describe: 'Run wallet-specific checks only',
     type: 'boolean',
+    description: 'Run wallet-specific checks only',
     default: false
   })
   .option('check-balances', {
@@ -77,12 +76,15 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run git-specific checks only',
     default: false
   })
-  .option('quick-launch', {
-    alias: 'q',
+  .option('help', {
+    alias: 'h',
     type: 'boolean',
-    description: 'Launch deployment process without checks or countdown',
+    description: 'Show help',
     default: false
   })
+  .epilogue(`\nTo learn more about the \x1b[35mPermalaunch CLI\x1b[0m, visit the documentation at \x1b[35mhttps://permalaunch.ar.io/docs\x1b[0m`)
+  .help()
+  .alias('help', 'h')
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -630,8 +632,7 @@ const checkGit = async () => {
         }
       } else {
         console.log('\n\x1b[31mPRELAUNCH CHECKLIST FAILED! ABORTING LAUNCH SEQUENCE!\x1b[0m');
-        console.log(`\x1b[33mTo identify the failed checklist items, run the \x1b[35m--prelaunch-checklist\x1b[33m flag\x1b[0m`);
-        console.log(`\nTo learn more about how to use the \x1b[35mPermalaunch CLI\x1b[0m then visit the documentation at \x1b[35mhttps://permalaunch.ar.io/docs\x1b[0m\n`);
+        console.log(`\x1b[33mTo identify the failed checklist items, run the \x1b[35m--prelaunch-checklist\x1b[33m flag\x1b[0m\n`);
         return;
       }
     }

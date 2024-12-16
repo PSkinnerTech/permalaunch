@@ -10,6 +10,7 @@ export interface DeployArgs {
     'check-build': boolean;
     'check-ant': boolean;
     'check-git': boolean;
+    'help': boolean;
   }
   
   export interface ArweaveManifest {
