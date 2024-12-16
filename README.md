@@ -6,7 +6,7 @@
 - [x] `--launch` flag implementation for deploying apps to Arweave
 - [x] `--prelaunch-checklist` comprehensive deployment readiness check
 - [ ] Individual check commands:
-  - [ ] `--check-wallet`
+  - [x] `--check-wallet`
   - [ ] `--check-balances`
   - [ ] `--check-build`
   - [ ] `--check-ant`
