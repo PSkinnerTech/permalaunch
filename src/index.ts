@@ -17,7 +17,7 @@ const argv = yargs(hideBin(process.argv))
   .option('ant-process', {
     alias: 'a',
     type: 'string',
-    description: 'The ANT process',
+    description: 'The ANT process (optional - only required for ARNS domain deployments)',
     demandOption: false,
   })
   .option('deploy-folder', {
@@ -531,18 +531,13 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     return;
   }
 
-  if (!ANT_PROCESS) {
-    console.error('ANT_PROCESS not configured');
-    return;
-  }
-
   if (argv.deployFolder.length === 0) {
     console.error('deploy folder must not be empty');
     return;
   }
 
-  if (argv.undername.length === 0) {
-    console.error('undername must not be empty');
+  if (argv.undername.length === 0 && ANT_PROCESS) {
+    console.error('undername must not be empty when using ANT process');
     return;
   }
 
@@ -560,30 +555,35 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
         return;
       }
 
-      const signer = new ArweaveSigner(jwk);
-      const ant = ANT.init({ processId: ANT_PROCESS, signer });
+      // Only attempt ANT deployment if ANT_PROCESS is provided
+      if (ANT_PROCESS) {
+        const signer = new ArweaveSigner(jwk);
+        const ant = ANT.init({ processId: ANT_PROCESS, signer });
 
-      await ant.setRecord(
-        {
-          undername: argv.undername,
-          transactionId: manifestId,
-          ttlSeconds: 3600,
-        },
-        {
-          tags: [
-            {
-              name: 'GIT-HASH',
-              value: process.env.GITHUB_SHA || '',
-            },
-            {
-              name: 'App-Name',
-              value: 'ARIO-Deploy',
-            },
-          ],
-        }
-      );
+        await ant.setRecord(
+          {
+            undername: argv.undername,
+            transactionId: manifestId,
+            ttlSeconds: 3600,
+          },
+          {
+            tags: [
+              {
+                name: 'GIT-HASH',
+                value: process.env.GITHUB_SHA || '',
+              },
+              {
+                name: 'App-Name',
+                value: 'ARIO-Deploy',
+              },
+            ],
+          }
+        );
 
-      console.log(`Deployed TxId [${manifestId}] to ANT [${ANT_PROCESS}] using undername [${argv.undername}]`);
+        console.log(`Deployed TxId [${manifestId}] to ANT [${ANT_PROCESS}] using undername [${argv.undername}]`);
+      } else {
+        console.log(`\nDeployment successful! Your app is available at:\nhttps://arweave.net/${manifestId}\n`);
+      }
     } catch (e) {
       console.error(e);
     }

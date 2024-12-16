@@ -12,8 +12,8 @@
   - [x] `--check-ant`
   - [ ] `--check-git`
 - [ ] Optimize `--launch` command:
-  - [ ] Make GIT HASH optional
-  - [ ] Make ANT PROCESS optional
+  - [x] Make GIT HASH optional
+  - [x] Make ANT PROCESS optional
 
 ### Next Steps
 1. Implement individual check commands
