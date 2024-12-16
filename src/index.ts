@@ -57,6 +57,11 @@ const argv = yargs(hideBin(process.argv))
     type: 'boolean',
     default: false
   })
+  .option('check-balances', {
+    type: 'boolean',
+    description: 'Run balance-specific checks only',
+    default: false
+  })
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -422,6 +427,24 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     return;
   }
 
+  if (argv['check-balances']) {
+    const encoded = execSync('cat wallet.json | base64').toString().trim();
+    
+    process.stdout.write('\n\x1b[33mCHECKING BALANCES...\x1b[0m');
+    const { turboBalance, arBalance, tarioBalance } = await getBalances(encoded);
+    
+    // Clear the "CHECKING BALANCES..." line
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    
+    console.log('\n\x1b[35mCHECK BALANCES:\x1b[0m');
+    console.log(`\x1b[32mTurbo Credit Balance:\x1b[0m ${turboBalance} Winston Credits`);
+    console.log(`\x1b[32mAR Balance:\x1b[0m ${arBalance} AR`);
+    console.log(`\x1b[32mtARIO Balance:\x1b[0m ${tarioBalance} tARIO`);
+    
+    return;
+  }
+
   if (!DEPLOY_KEY) {
     console.error('DEPLOY_KEY not configured');
     return;
@@ -485,7 +508,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     }
   }
 
-  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet']) {
+  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances']) {
     console.log('Please specify either --launch, --prelaunch-checklist, or --check-wallet flag');
     return;
   }

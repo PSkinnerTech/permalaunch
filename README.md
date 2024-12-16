@@ -7,7 +7,7 @@
 - [x] `--prelaunch-checklist` comprehensive deployment readiness check
 - [ ] Individual check commands:
   - [x] `--check-wallet`
-  - [ ] `--check-balances`
+  - [x] `--check-balances`
   - [ ] `--check-build`
   - [ ] `--check-ant`
   - [ ] `--check-git`
