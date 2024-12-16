@@ -1,25 +1,23 @@
 # PERMALAUNCH
 
-## Project Status
+## Usage
 
-### Completed Features
-- [x] `--launch` flag implementation for deploying apps to Arweave
-- [x] `--prelaunch-checklist` comprehensive deployment readiness check
-- [ ] Individual check commands:
-  - [x] `--check-wallet`
-  - [x] `--check-balances`
-  - [x] `--check-build`
-  - [x] `--check-ant`
-  - [ ] `--check-git`
-- [ ] Optimize `--launch` command:
-  - [x] Make GIT HASH optional
-  - [x] Make ANT PROCESS optional
+### Basic Commands
 
-### Next Steps
-1. Implement individual check commands
-2. Optimize launch command for optional parameters
-3. Update documentation for each command
-4. Add error handling for optional parameters
+- `--launch`: Deploy your app to Arweave
+- `--prelaunch-checklist`: Run a comprehensive deployment readiness check
+
+### Individual Check Commands
+
+- `--check-wallet`: Verify wallet configuration
+- `--check-balances`: Check AR, tARIO, and Turbo Credit balances
+- `--check-build`: Validate build folder and estimate deployment costs
+- `--check-ant`: Verify ANT configuration (for ARNS domains)
+- `--check-git`: Check Git configuration for automated deployments
+
+## Documentation
+
+For detailed documentation, visit [https://permalaunch.ar.io/docs](https://permalaunch.ar.io/docs)
 
 ## License
 
