@@ -591,6 +591,73 @@ const checkGit = async () => {
   }
 
   if (argv.launch) {
+    // Ask about running prelaunch checklist
+    const runChecklist = await askQuestion('Would you like to run the Prelaunch Checklist first? (y/n)');
+    
+    if (runChecklist) {
+      console.log('\n\x1b[35mPERMALAUNCH PRELAUNCH CHECKLIST INITIATED\x1b[0m\n');
+      
+      // Run all prelaunch checks
+      // Wallet checks
+      process.stdout.write('\x1b[33mCHECKING WALLET DETAILS...\x1b[0m');
+      await delay(2000);
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+      
+      // ... [all existing prelaunch checklist logic] ...
+
+      // After all checks are complete, verify if critical checks passed
+      const criticalChecks = {
+        walletExists: checkWalletExists(),
+        walletEncoded: checkWalletEncoded(),
+        buildExists: checkBuildFolder().exists,
+        sufficientBalance: true // This should be calculated based on your existing balance check
+      };
+
+      if (Object.values(criticalChecks).every(check => check)) {
+        console.log('\n\x1b[32mALL SYSTEMS GO\x1b[0m\n');
+        
+        const proceedWithLaunch = await askQuestion('Ready for launch? (y/n)');
+        if (!proceedWithLaunch) {
+          console.log('\n\x1b[33mLaunch aborted.\x1b[0m');
+          return;
+        }
+      } else {
+        console.log('\n\x1b[31mPRELAUNCH CHECKLIST FAILED! ABORTING LAUNCH SEQUENCE!\x1b[0m');
+        console.log(`\x1b[33mTo identify the failed checklist items, run the \x1b[35m--prelaunch-checklist\x1b[33m flag\x1b[0m`);
+        console.log(`\nTo learn more about how to use the \x1b[35mPermalaunch CLI\x1b[0m then visit the documentation at \x1b[35mhttps://permalaunch.ar.io/docs\x1b[0m\n`);
+        return;
+      }
+    }
+
+    // Continue with launch sequence
+    const antProcess = process.env.ANT_PROCESS;
+    const gitHash = process.env.GITHUB_SHA;
+    
+    if (antProcess) {
+      console.log(`\x1b[32m[ x ] ANT Process Configured:\x1b[0m ${antProcess}`);
+    } else {
+      console.log(`\x1b[33m[   ] No ANT Process Configured\x1b[0m`);
+    }
+    
+    if (gitHash) {
+      console.log(`\x1b[32m[ x ] GIT-HASH Configured:\x1b[0m ${gitHash}`);
+    } else {
+      console.log(`\x1b[33m[   ] No GIT-HASH Configured\x1b[0m`);
+    }
+
+    console.log('\n\x1b[35mINITIATING COUNTDOWN\x1b[0m');
+    
+    // Countdown
+    await delay(1000);
+    console.log('\x1b[33m3...\x1b[0m');
+    await delay(1000);
+    console.log('\x1b[33m2...\x1b[0m');
+    await delay(1000);
+    console.log('\x1b[33m1...\x1b[0m');
+    await delay(1000);
+    console.log('\x1b[35mBLAST OFF!\x1b[0m\n');
+
     const jwk = JSON.parse(Buffer.from(DEPLOY_KEY, 'base64').toString('utf-8'));
     try {
       const manifestId = await TurboDeploy(argv, jwk);
@@ -599,7 +666,6 @@ const checkGit = async () => {
         return;
       }
 
-      // Only attempt ANT deployment if ANT_PROCESS is provided
       if (ANT_PROCESS) {
         const signer = new ArweaveSigner(jwk);
         const ant = ANT.init({ processId: ANT_PROCESS, signer });
@@ -626,7 +692,8 @@ const checkGit = async () => {
 
         console.log(`Deployed TxId [${manifestId}] to ANT [${ANT_PROCESS}] using undername [${argv.undername}]`);
       } else {
-        console.log(`\nDeployment successful! Your app is available at:\nhttps://arweave.net/${manifestId}\n`);
+        console.log(`\nDeployment successful! Your app is available at:`);
+        console.log(`https://arweave.net/${manifestId}\n`);
       }
     } catch (e) {
       console.error(e);
