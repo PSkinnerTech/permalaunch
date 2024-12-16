@@ -52,6 +52,11 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run the prelaunch checklist verification',
     default: false
   })
+  .option('check-wallet', {
+    describe: 'Run wallet-specific checks only',
+    type: 'boolean',
+    default: false
+  })
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -332,12 +337,15 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       const encoded = execSync('cat wallet.json | base64').toString().trim();
       const { turboBalance } = await getBalances(encoded);
       
-      // Compare with turbo balance
-      const turboBalanceBigInt = BigInt(turboBalance);
-      const deploymentCostBigInt = BigInt(deploymentCost);
+      const criticalChecks = {
+        walletExists: checkWalletExists(),
+        walletEncoded: checkWalletEncoded(),
+        buildExists: exists,
+        sufficientBalance: exists && BigInt(turboBalance) >= BigInt(deploymentCost)
+      };
       
-      if (turboBalanceBigInt >= deploymentCostBigInt) {
-        const percentage = (Number(deploymentCostBigInt) / Number(turboBalanceBigInt) * 100).toFixed(2);
+      if (criticalChecks.sufficientBalance) {
+        const percentage = (Number(BigInt(deploymentCost)) / Number(BigInt(turboBalance)) * 100).toFixed(2);
         console.log(`\x1b[32m[ x ] Sufficient Balance\x1b[0m (${percentage}% of total balance)`);
       } else {
         console.log(`\x1b[31m[   ] Insufficient Balance\x1b[0m`);
@@ -368,6 +376,47 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       console.log(`\n\x1b[33mThe ANT isn't required to deploy your app onto Arweave, but you should understand that your app's url will look something like (\x1b[31mhttps://arweave.net/[very-long-hash]\x1b[33m) rather than something like (\x1b[35mhttps://permalaunch.ar.io\x1b[33m).\n`);
       console.log(`\x1b[33mIf your interested in getting an ARNS domain for your app, then go \x1b[35mhttps://arns.app/\x1b[33m to get your own.\n`);
       console.log(`\x1b[33mIf you want to learn more about ANTs and ARNS domains, then head over to \x1b[35mhttps://docs.ar.io/\x1b[33m\x1b[0m`);
+    }
+    
+    return;
+  }
+
+  if (argv['check-wallet']) {
+    console.log('\n\x1b[35mWALLET CHECKLIST:\x1b[0m');
+    
+    process.stdout.write('\x1b[33mCHECKING WALLET DETAILS...\x1b[0m');
+    await delay(2000);
+    
+    // Clear the "CHECKING WALLET DETAILS..." line
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+
+    const walletExists = checkWalletExists();
+    if (walletExists) {
+      console.log(`\x1b[32m[ x ] Identified wallet.json\x1b[0m`);
+    } else {
+      console.log(`\x1b[31m[   ] Identified wallet.json`);
+      console.log(`\x1b[33mYour wallet.json file couldn't be identified. For instructions on how to properly set up your wallet.json file, go to https://permalaunch.ar.io/docs\x1b[0m`);
+      return;
+    }
+
+    const walletEncoded = checkWalletEncoded();
+    if (walletEncoded) {
+      console.log(`\x1b[32m[ x ] Wallet encoded\x1b[0m`);
+      const encoded = execSync('cat wallet.json | base64').toString().trim();
+      const address = await getWalletAddress(encoded);
+      console.log(`\x1b[32m[ x ] Wallet Address:\x1b[0m ${address}`);
+    } else {
+      console.log(`\x1b[31m[   ] Wallet encoded\x1b[0m`);
+      await handleWalletEncoding();
+    }
+
+    const walletIgnored = checkWalletInGitignore();
+    if (walletIgnored) {
+      console.log(`\x1b[32m[ x ] Wallet in .gitignore\x1b[0m`);
+    } else {
+      console.log(`\x1b[31m[   ] Wallet in .gitignore\x1b[0m`);
+      console.log(`\x1b[33mYour wallet.json is not in .gitignore. Please add it to prevent accidentally committing it to GitHub.\x1b[0m`);
     }
     
     return;
@@ -436,8 +485,8 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     }
   }
 
-  if (!argv.launch && !argv['prelaunch-checklist']) {
-    console.log('Please specify either --launch or --prelaunch-checklist flag');
+  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet']) {
+    console.log('Please specify either --launch, --prelaunch-checklist, or --check-wallet flag');
     return;
   }
 })();

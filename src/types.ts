@@ -4,6 +4,7 @@ export interface DeployArgs {
     undername: string;
     launch: boolean;
     'prelaunch-checklist': boolean;
+    'check-wallet': boolean;
   }
   
   export interface ArweaveManifest {
