@@ -12,6 +12,8 @@
 - [x] Optimize `--launch` command:
   - [x] Make GIT HASH optional (2024-12-16)
   - [x] Make ANT PROCESS optional (2024-12-16)
+- [x] Add `--quick-launch` flag for bypassing checks (2024-12-16)
+- [x] Add `--help` flag for CLI documentation (2024-12-16)
 
 ## Short-term Goals
 - [ ] Upload to npm
