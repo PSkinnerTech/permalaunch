@@ -67,6 +67,11 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run build-specific checks only',
     default: false
   })
+  .option('check-ant', {
+    type: 'boolean',
+    description: 'Run ANT-specific checks only',
+    default: false
+  })
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -497,6 +502,30 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     return;
   }
 
+  if (argv['check-ant']) {
+    process.stdout.write('\n\x1b[33mCHECKING ANT...\x1b[0m');
+    await delay(2000);
+    
+    // Clear the "CHECKING ANT..." line
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    
+    console.log('\n\x1b[35mCHECK ANT:\x1b[0m');
+    const antProcess = process.env.ANT_PROCESS;
+    if (antProcess) {
+      console.log(`\x1b[32m[ x ] ANT Process Identified\x1b[0m`);
+      console.log(`\x1b[32m[ x ] ANT Process:\x1b[0m ${antProcess}`);
+    } else {
+      console.log(`\x1b[31m[   ] ANT Process Identified\x1b[0m`);
+      console.log(`\x1b[31m[   ] ANT Process:\x1b[0m Not configured`);
+      console.log(`\n\x1b[33mThe ANT isn't required to deploy your app onto Arweave, but you should understand that your app's url will look something like (\x1b[31mhttps://arweave.net/[very-long-hash]\x1b[33m) rather than something like (\x1b[35mhttps://permalaunch.ar.io\x1b[33m).\n`);
+      console.log(`\x1b[33mIf your interested in getting an ARNS domain for your app, then go \x1b[35mhttps://arns.app/\x1b[33m to get your own.\n`);
+      console.log(`\x1b[33mIf you want to learn more about ANTs and ARNS domains, then head over to \x1b[35mhttps://docs.ar.io/\x1b[33m\x1b[0m`);
+    }
+    
+    return;
+  }
+
   if (!DEPLOY_KEY) {
     console.error('DEPLOY_KEY not configured');
     return;
@@ -560,7 +589,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     }
   }
 
-  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances'] && !argv['check-build']) {
+  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances'] && !argv['check-build'] && !argv['check-ant']) {
     console.log('Please specify either --launch, --prelaunch-checklist, or --check-wallet flag');
     return;
   }

@@ -7,6 +7,7 @@ export interface DeployArgs {
     'check-wallet': boolean;
     'check-balances': boolean;
     'check-build': boolean;
+    'check-ant': boolean;
   }
   
   export interface ArweaveManifest {

@@ -9,7 +9,7 @@
   - [x] `--check-wallet`
   - [x] `--check-balances`
   - [x] `--check-build`
-  - [ ] `--check-ant`
+  - [x] `--check-ant`
   - [ ] `--check-git`
 - [ ] Optimize `--launch` command:
   - [ ] Make GIT HASH optional
