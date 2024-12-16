@@ -214,6 +214,43 @@ function checkBuildFolder(): { exists: boolean; type: string | null } {
   return { exists: false, type: null };
 }
 
+async function getDeploymentCost(buildFolder: string): Promise<string> {
+  try {
+    const wallet = JSON.parse(Buffer.from(process.env.DEPLOY_KEY!, 'base64').toString());
+    const signer = new ArweaveSigner(wallet);
+    const turbo = TurboFactory.authenticated({ signer });
+
+    // Calculate total size of build folder
+    const getFolderSize = (dirPath: string): number => {
+      let totalSize = 0;
+      const files = fs.readdirSync(dirPath);
+      
+      for (const file of files) {
+        const filePath = path.join(dirPath, file);
+        const stats = fs.statSync(filePath);
+        
+        if (stats.isDirectory()) {
+          totalSize += getFolderSize(filePath);
+        } else {
+          totalSize += stats.size;
+        }
+      }
+      
+      return totalSize;
+    };
+
+    const folderSize = getFolderSize(buildFolder);
+    const [{ winc: deploymentCost }] = await turbo.getUploadCosts({
+      bytes: [folderSize],
+    });
+
+    return deploymentCost.toString();
+  } catch (error) {
+    console.error('\x1b[31mError calculating deployment cost:', error, '\x1b[0m');
+    return '0';
+  }
+}
+
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 (async () => {
@@ -227,7 +264,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     process.stdout.clearLine(0);
     process.stdout.cursorTo(0);
     
-    console.log('\x1b[35mWALLET CHECKLIST:\x1b[0m');
+    console.log('\n\x1b[35mWALLET CHECKLIST:\x1b[0m');
     const walletExists = checkWalletExists();
     if (walletExists) {
       console.log(`\x1b[32m[ x ] Identified wallet.json\x1b[0m`);
@@ -250,7 +287,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       console.log(`\x1b[32m[ x ] Wallet encoded\x1b[0m`);
       const encoded = execSync('cat wallet.json | base64').toString().trim();
       const address = await getWalletAddress(encoded);
-      console.log(`\x1b[32m[ x ] Wallet Address: ${address}\x1b[0m`);
+      console.log(`\x1b[32m[ x ] Wallet Address:\x1b[0m ${address}`);
       
       process.stdout.write('\n\x1b[33mCHECKING BALANCES...\x1b[0m');
       const { turboBalance, arBalance, tarioBalance } = await getBalances(encoded);
@@ -262,7 +299,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
       console.log('\n\x1b[35mCHECK BALANCES:\x1b[0m');
       console.log(`\x1b[32mTurbo Credit Balance:\x1b[0m ${turboBalance} Winston Credits`);
       console.log(`\x1b[32mAR Balance:\x1b[0m ${arBalance} AR`);
-      console.log(`\x1b[32mtARIO Balance:\x1b[0m ${tarioBalance} tARIO`);
+      console.log(`\x1b[32mtARIO Balance:\x1b[0m ${tarioBalance}`);
     } else {
       console.log(`\x1b[31m[   ] Wallet encoded\x1b[0m`);
       await handleWalletEncoding();
@@ -278,9 +315,35 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     
     console.log('\n\x1b[35mCHECK BUILD:\x1b[0m');
     const { exists, type } = checkBuildFolder();
-    if (exists) {
+    if (exists && type) {
       console.log(`\x1b[32m[ x ] Build Folder Identified\x1b[0m`);
       console.log(`\x1b[32m[ x ] Build Folder Type:\x1b[0m ${type}`);
+      
+      process.stdout.write('\x1b[33mCalculating deployment cost...\x1b[0m');
+      const deploymentCost = await getDeploymentCost(type);
+      
+      // Clear the "Calculating deployment cost..." line
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+      
+      console.log(`\x1b[32m[ x ] Deployment Cost:\x1b[0m ${deploymentCost} Winston Credits`);
+      
+      // Get the current turbo balance from the encoded wallet
+      const encoded = execSync('cat wallet.json | base64').toString().trim();
+      const { turboBalance } = await getBalances(encoded);
+      
+      // Compare with turbo balance
+      const turboBalanceBigInt = BigInt(turboBalance);
+      const deploymentCostBigInt = BigInt(deploymentCost);
+      
+      if (turboBalanceBigInt >= deploymentCostBigInt) {
+        const percentage = (Number(deploymentCostBigInt) / Number(turboBalanceBigInt) * 100).toFixed(2);
+        console.log(`\x1b[32m[ x ] Sufficient Balance\x1b[0m (${percentage}% of total balance)`);
+      } else {
+        console.log(`\x1b[31m[   ] Insufficient Balance\x1b[0m`);
+        console.log(`\n\x1b[33mYou don't have enough Turbo Credits to deploy this application. Either your application is too large and should be downsized, or you will need to get more Turbo Credits.\n`);
+        console.log(`\x1b[33mTo get more Turbo Credits, you can make your purchase in crypto or fiat at \x1b[31mhttps://buy-turbo-credits.ardrive.io/\x1b[33m.\x1b[0m\n`);
+      }
     } else {
       console.log(`\x1b[31m[   ] Build Folder Identified\x1b[0m`);
       console.log(`\x1b[31m[   ] Build Folder Type:\x1b[0m None found`);
