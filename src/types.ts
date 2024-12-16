@@ -3,6 +3,7 @@ export interface DeployArgs {
     deployFolder: string;
     undername: string;
     launch: boolean;
+    'quick-launch': boolean;
     'prelaunch-checklist': boolean;
     'check-wallet': boolean;
     'check-balances': boolean;

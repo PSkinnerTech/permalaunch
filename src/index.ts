@@ -77,6 +77,12 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run git-specific checks only',
     default: false
   })
+  .option('quick-launch', {
+    alias: 'q',
+    type: 'boolean',
+    description: 'Launch deployment process without checks or countdown',
+    default: false
+  })
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -698,6 +704,27 @@ const checkGit = async () => {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  if (argv['quick-launch']) {
+    const jwk = JSON.parse(Buffer.from(DEPLOY_KEY, 'base64').toString('utf-8'));
+    try {
+      const manifestId = await TurboDeploy(argv, jwk);
+      if (!manifestId) {
+        console.error('Failed to get manifest ID');
+        return;
+      }
+
+      if (ANT_PROCESS) {
+        // ... existing ANT deployment code ...
+      } else {
+        console.log(`\nDeployment successful! Your app is available at:`);
+        console.log(`https://arweave.net/${manifestId}\n`);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return;
   }
 
   if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances'] && !argv['check-build'] && !argv['check-ant'] && !argv['check-git']) {
