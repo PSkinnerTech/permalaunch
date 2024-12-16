@@ -8,7 +8,7 @@
 - [ ] Individual check commands:
   - [x] `--check-wallet`
   - [x] `--check-balances`
-  - [ ] `--check-build`
+  - [x] `--check-build`
   - [ ] `--check-ant`
   - [ ] `--check-git`
 - [ ] Optimize `--launch` command:

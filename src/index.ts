@@ -62,6 +62,11 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run balance-specific checks only',
     default: false
   })
+  .option('check-build', {
+    type: 'boolean',
+    description: 'Run build-specific checks only',
+    default: false
+  })
   .parseSync() as DeployArgs;
 
 const DEPLOY_KEY = process.env.DEPLOY_KEY;
@@ -445,6 +450,53 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     return;
   }
 
+  if (argv['check-build']) {
+    process.stdout.write('\n\x1b[33mCHECKING BUILD...\x1b[0m');
+    await delay(2000);
+    
+    // Clear the "CHECKING BUILD..." line
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
+    
+    console.log('\n\x1b[35mCHECK BUILD:\x1b[0m');
+    const { exists, type } = checkBuildFolder();
+    if (exists && type) {
+      console.log(`\x1b[32m[ x ] Build Folder Identified\x1b[0m`);
+      console.log(`\x1b[32m[ x ] Build Folder Type:\x1b[0m ${type}`);
+      
+      process.stdout.write('\x1b[33mCalculating deployment cost...\x1b[0m');
+      const deploymentCost = await getDeploymentCost(type);
+      
+      // Clear the "Calculating deployment cost..." line
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+      
+      console.log(`\x1b[32m[ x ] Deployment Cost:\x1b[0m ${deploymentCost} Winston Credits`);
+      
+      // Get the current turbo balance from the encoded wallet
+      const encoded = execSync('cat wallet.json | base64').toString().trim();
+      const { turboBalance } = await getBalances(encoded);
+      
+      // Compare with turbo balance
+      const turboBalanceBigInt = BigInt(turboBalance);
+      const deploymentCostBigInt = BigInt(deploymentCost);
+      
+      if (turboBalanceBigInt >= deploymentCostBigInt) {
+        const percentage = (Number(deploymentCostBigInt) / Number(turboBalanceBigInt) * 100).toFixed(2);
+        console.log(`\x1b[32m[ x ] Sufficient Balance\x1b[0m (${percentage}% of total balance)`);
+      } else {
+        console.log(`\x1b[31m[   ] Insufficient Balance\x1b[0m`);
+        console.log(`\n\x1b[33mYou don't have enough Turbo Credits to deploy this application. Either your application is too large and should be downsized, or you will need to get more Turbo Credits.\n`);
+        console.log(`\x1b[33mTo get more Turbo Credits, you can make your purchase in crypto or fiat at \x1b[31mhttps://buy-turbo-credits.ardrive.io/\x1b[33m.\x1b[0m\n`);
+      }
+    } else {
+      console.log(`\x1b[31m[   ] Build Folder Identified\x1b[0m`);
+      console.log(`\x1b[31m[   ] Build Folder Type:\x1b[0m None found`);
+    }
+    
+    return;
+  }
+
   if (!DEPLOY_KEY) {
     console.error('DEPLOY_KEY not configured');
     return;
@@ -508,7 +560,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     }
   }
 
-  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances']) {
+  if (!argv.launch && !argv['prelaunch-checklist'] && !argv['check-wallet'] && !argv['check-balances'] && !argv['check-build']) {
     console.log('Please specify either --launch, --prelaunch-checklist, or --check-wallet flag');
     return;
   }
