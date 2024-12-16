@@ -1,13 +1,19 @@
 # Roadmap
 
-## Current Focus
-1. Implement individual check commands
-2. Optimize launch command for optional parameters
-3. Update documentation for each command
-4. Add error handling for optional parameters
+## Completed Features
+- [x] `--launch` flag implementation for deploying apps to Arweave (2024-12-15)
+- [x] `--prelaunch-checklist` comprehensive deployment readiness check (2024-12-15)
+- [x] Individual check commands:
+  - [x] `--check-wallet` (2024-12-16)
+  - [x] `--check-balances` (2024-12-16)
+  - [x] `--check-build` (2024-12-16)
+  - [x] `--check-ant` (2024-12-16)
+  - [x] `--check-git` (2024-12-16)
+- [x] Optimize `--launch` command:
+  - [x] Make GIT HASH optional (2024-12-16)
+  - [x] Make ANT PROCESS optional (2024-12-16)
 
-## Future Enhancements
-1. Add support for custom deployment configurations
-2. Implement deployment templates
-3. Add support for automated testing before deployment
-4. Create interactive deployment wizard
+## Short-term Goals
+- [ ] Upload to npm
+- [ ] Develop a `--configure-ant` wizard for easily selecting ARNS domains and undernames to deploy to
+- [ ] Develop a CLI for installing multiple framework options with permalaunch pre-configured
