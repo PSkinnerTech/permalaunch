@@ -1,0 +1,41 @@
+{
+	"name": "permalaunch",
+	"version": "0.0.1",
+	"type": "module",
+	"description": "Permaweb app deployment package",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w",
+		"link": "npm link"
+	},
+	"bin": {
+		"permalaunch": "./dist/index.js"
+	},
+	"dependencies": {
+		"@ar.io/sdk": "^3.0.0",
+		"@ardrive/turbo-sdk": "^1.17.0",
+		"inquirer": "^12.2.0",
+		"mime-types": "^2.1.35",
+		"stream": "^0.0.3",
+		"yargs": "17.7.2"
+	},
+	"devDependencies": {
+		"@types/mime-types": "^2.1.4",
+		"@types/node": "^20.17.10",
+		"@types/yargs": "^17.0.33",
+		"@typescript-eslint/eslint-plugin": "^7.18.0",
+		"@typescript-eslint/parser": "^7.18.0",
+		"eslint": "^8.35.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-simple-import-sort": "^10.0.0",
+		"typescript": "^5.7.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/permaweb/permaweb-deploy.git"
+	},
+	"author": "PSkinnerTech",
+	"license": "MIT"
+}
