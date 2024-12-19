@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Individual check commands implementation
 - Error handling for optional parameters
 - Enhanced documentation for each command
+- `--quick-launch` flag for bypassing prelaunch checks
+- `--help` flag for CLI documentation
+- Interactive prelaunch checklist in `--launch` command
 
 ## [0.0.1] - 2024-02-16
 ### Added

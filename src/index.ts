@@ -583,20 +583,24 @@ const checkGit = async () => {
     return;
   }
 
-  if (argv.deployFolder.length === 0) {
-    console.error('deploy folder must not be empty');
+  const { exists, type } = checkBuildFolder();
+  if (!exists) {
+    console.error('No build folder found. Please ensure you have a /dist, /build, or /.next folder');
     return;
   }
 
-  if (argv.undername.length === 0 && ANT_PROCESS) {
-    console.error('undername must not be empty when using ANT process');
+  if (type && type.length === 0) {
+    console.error('Build folder must not be empty');
     return;
   }
 
-  if (!fs.existsSync(argv.deployFolder)) {
-    console.error(`deploy folder [${argv.deployFolder}] does not exist`);
+  if (!fs.existsSync(type!)) {
+    console.error(`Build folder [${type}] does not exist`);
     return;
   }
+
+  // Update deployFolder to use detected folder
+  argv.deployFolder = type!;
 
   if (argv.launch) {
     // Ask about running prelaunch checklist
