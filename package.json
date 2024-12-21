@@ -1,11 +1,19 @@
 {
 	"name": "permalaunch",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"type": "module",
 	"description": "Permaweb app deployment package",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
-	"keywords": ["permalaunch", "arweave", "permaweb", "deploy", "deployer", "deployer-tool", "deployment-tool-for-permaweb, arns, ar.io, Patrick Skinner"],
+	"keywords": [
+		"permalaunch",
+		"arweave",
+		"permaweb",
+		"deploy",
+		"deployer",
+		"deployer-tool",
+		"deployment-tool-for-permaweb, arns, ar.io, Patrick Skinner"
+	],
 	"scripts": {
 		"build": "tsc",
 		"watch": "tsc -w",
