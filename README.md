@@ -2,6 +2,10 @@
 
 Deploy your web apps to the permaweb with ease! Permalaunch is a CLI tool that simplifies the process of deploying applications to Arweave.
 
+## BETA
+
+This is a beta release. Please report any issues to [https://github.com/pskinnertech/permalaunch/issues](https://github.com/pskinnertech/permalaunch/issues)
+When this tool is ready for production, it will be renamed, this CLI will be deprecated, and the tool will be moved to a new repository.
 ## Features
 
 - 🚀 One-command deployment to Arweave
