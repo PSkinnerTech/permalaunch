@@ -1,4 +1,4 @@
-# Permalaunch
+# PERMALAUNCH
 
 Deploy your web apps to the permaweb with ease! Permalaunch is a CLI tool that simplifies the process of deploying applications to Arweave.
 
@@ -6,6 +6,7 @@ Deploy your web apps to the permaweb with ease! Permalaunch is a CLI tool that s
 
 This is a beta release. Please report any issues to [https://github.com/pskinnertech/permalaunch/issues](https://github.com/pskinnertech/permalaunch/issues)
 When this tool is ready for production, it will be renamed, this CLI will be deprecated, and the tool will be moved to a new repository.
+
 ## Features
 
 - 🚀 One-command deployment to Arweave
@@ -16,12 +17,6 @@ When this tool is ready for production, it will be renamed, this CLI will be dep
 - 💳 Balance and cost estimation
 - 📁 Support for multiple build types (dist, build, .next)
 
-## Installation
-
-```bash
-npm install -g permalaunch
-```
-
 ## Quick Start
 
 1. Set your deployment key:
@@ -31,51 +26,26 @@ export DEPLOY_KEY=your_base64_encoded_key
 
 2. Deploy your app:
 ```bash
-permalaunch --launch
+npx permalaunch --launch
 ```
 
 ## Usage
 
 ### Basic Commands
 
-- `--launch`: Deploy your app to Arweave
-- `--quick-launch`: Deploy without checks
-- `--prelaunch-checklist`: Run a comprehensive deployment readiness check
+For a quick launch, use the following command:
+```bash
+npx permalaunch --quick-launch
+```
 
 ### Individual Check Commands
 
-- `--check-wallet`: Verify wallet configuration
-- `--check-balances`: Check AR, tARIO, and Turbo Credit balances
-- `--check-build`: Validate build folder and estimate deployment costs
-- `--check-ant`: Verify ANT configuration (for ARNS domains)
-- `--check-git`: Check Git configuration for automated deployments
-
-### Options
-
-- `--ant-process, -a`: Specify ANT process for ARNS domains
-- `--deploy-folder, -d`: Specify build folder (default: checks ./dist, ./build, ./.next)
-- `--undername, -u`: Specify ANT undername (default: @)
-
-## Examples
-
-### Basic Deployment
 ```bash
-permalaunch --launch
-```
-
-### Quick Deployment (Skip Checks)
-```bash
-permalaunch --quick-launch
-```
-
-### Deploy to ARNS Domain
-```bash
-permalaunch --launch --ant-process myapp.ar-io.dev --undername staging
-```
-
-### Custom Build Folder
-```bash
-permalaunch --launch --deploy-folder ./out
+npx permalaunch --check-wallet    # Verify wallet configuration
+npx permalaunch --check-balances  # Check balances
+npx permalaunch --check-build     # Validate build folder
+npx permalaunch --check-ant       # Verify ANT configuration
+npx permalaunch --check-git       # Check Git configuration
 ```
 
 ## Configuration
