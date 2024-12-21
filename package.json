@@ -1,6 +1,6 @@
 {
 	"name": "permalaunch",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"type": "module",
 	"description": "Permaweb app deployment package",
 	"main": "dist/index.js",
