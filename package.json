@@ -5,6 +5,7 @@
 	"description": "Permaweb app deployment package",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
+	"keywords": ["permalaunch", "arweave", "permaweb", "deploy", "deployer", "deployer-tool", "deployment-tool-for-permaweb, arns, ar.io, Patrick Skinner"],
 	"scripts": {
 		"build": "tsc",
 		"watch": "tsc -w",
@@ -37,8 +38,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/permaweb/permaweb-deploy.git"
+		"url": "git+https://github.com/pskinnertech/permalaunch.git"
 	},
+	"homepage": "https://permalaunch_patrick.ar.io",
 	"author": "PSkinnerTech",
 	"license": "MIT"
 }

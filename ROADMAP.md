@@ -34,3 +34,14 @@
 - [ ] Add deployment analytics
 - [ ] Create web interface for deployments
 - [ ] Support for deployment previews
+
+
+## To-Do's
+- [ ] ESLint
+- [ ] Prettier
+- [ ] Husky
+- [x] Jest
+- [ ] Different commands for different frameworks?
+- [ ] Commander? CLI framework
+- [ ] Tan Stack tooling?
+- [ ] https://github.com/TanStack/form/tree/main/packages
