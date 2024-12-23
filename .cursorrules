@@ -1,0 +1,78 @@
+You are an expert in Node.js, CLI development, JavaScript, Typescript, and secure coding practices.
+
+  Code Style and Structure
+  - Write concise, functional JavaScript with modular architecture.
+  - Avoid duplication of code by creating reusable utility functions for scanning and pattern matching.
+  - Use descriptive function and variable names to clarify intent (e.g., `scanForWalletFiles`, `hasSensitiveData`).
+  - Separate code into logical sections: file scanning, regex matching, CLI execution, and test scripts.
+  - Follow Node.js best practices for file system operations and process management.
+
+  Scanner Logic
+  - Detect files that should never be committed, including:
+    - `wallet.json`
+    - Files with extensions like `*.key.json` or `*hash.json`
+  - Identify Base64-encoded secrets using regex patterns to ensure no encoded sensitive data is exposed.
+  - Scan for hardcoded API keys or sensitive variables using regex patterns for common terms like `API_KEY`, `SECRET_KEY`, or `ACCESS_TOKEN`.
+  - Ensure each scan function operates independently and returns clear boolean results.
+
+  Syntax and Formatting
+  - Use `const` and `let` for variable declarations.
+  - Write pure functions wherever possible and avoid side effects.
+  - Use concise syntax for conditionals and early returns for error handling.
+  - Structure CLI commands with clarity and descriptive help messages.
+
+  Testing
+  - Use Jest for unit testing individual scanning functions.
+  - Write integration tests using Node.js `child_process.spawn` to simulate CLI execution.
+  - Set up mock repositories with predefined sensitive and safe files for testing.
+  - Implement edge case testing with fuzz inputs, ensuring the scanner handles unexpected data gracefully.
+  - Automate tests in CI/CD pipelines using GitHub Actions for every push or pull request.
+
+  CI/CD Integration
+  - Automate testing on every commit with GitHub Actions:
+    - Linting with ESLint for code quality.
+    - Unit and integration tests with Jest.
+  - Set up workflows to simulate `npx` usage and validate CLI behavior in diverse environments.
+
+  Error Handling and Validation
+  - Validate input parameters for CLI commands.
+  - Use clear and descriptive error messages to guide users when sensitive data is detected.
+  - Exit with appropriate status codes (0 for success, 1 for failure).
+  - Log warnings when potential sensitive data is found but allow configurable overrides.
+
+  Performance Optimization
+  - Optimize regex patterns for speed and accuracy.
+  - Avoid unnecessary file reads by leveraging `glob` patterns to narrow down file searches.
+  - Use memoization or caching when processing large directories repeatedly.
+
+  Security Best Practices
+  - Avoid exposing sensitive keys or data in logs or error messages.
+  - Provide users with guidance on adding `.gitignore` entries for sensitive files like `.env` or `wallet.json`.
+  - Ensure the CLI does not accidentally overwrite or delete critical user files.
+
+  Documentation
+  - Provide clear usage instructions in the CLI help menu and README.md.
+  - Include examples for initializing safety checks and interpreting scan results.
+  - Explain how to integrate the CLI into Git workflows using custom hooks.
+
+  Key Conventions
+  1. Prioritize detecting sensitive files and keys during the `init` process.
+  2. Integrate safety scans into Git workflows with custom pre-commit or pre-push hooks.
+  3. Ensure seamless usability with `npx` for users who don’t want to install the CLI globally.
+  4. Offer dry-run and verbose modes for enhanced user control.
+  5. Provide actionable feedback and clear remediation steps when issues are found.
+
+  Testing Tools and Mock Repositories
+  - Use Jest for writing unit and integration tests.
+  - Simulate CLI commands with realistic mock directories containing test data.
+  - Create safe and unsafe test cases to ensure accurate detection of sensitive data.
+  - Automate running these tests using CI pipelines.
+
+  Example Workflow
+  - Write scanner logic for wallet files, Base64 strings, and API keys.
+  - Test individual components with unit tests.
+  - Verify end-to-end behavior with integration tests on mock repositories.
+  - Automate testing and validation with GitHub Actions.
+  - Publish to npm when all checks pass successfully.
+
+  Refer to the detailed steps in ./PHASE1.md for implementation and testing specifics.
