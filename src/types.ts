@@ -33,3 +33,21 @@ export interface DeployArgs {
     name: string;
     value: string;
   }
+  
+  export interface BalanceInfo {
+    turboBalance: string;
+    arBalance: string;
+    tarioBalance: string;
+  }
+  
+  export interface BuildInfo {
+    exists: boolean;
+    type: string | null;
+  }
+  
+  export interface CriticalChecks {
+    walletExists: boolean;
+    walletEncoded: boolean;
+    buildExists: boolean;
+    sufficientBalance: boolean;
+  }
