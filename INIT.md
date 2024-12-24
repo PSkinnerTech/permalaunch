@@ -4,28 +4,28 @@
 Create a new `init` command that automates the wallet setup process for first-time users.
 
 ## Implementation Checklist
-- [ ] Add `--init` flag to CLI options
-- [ ] Create new `init.ts` command file
-- [ ] Implement wallet file detection:
-  - [ ] Search for `wallet.json`
-  - [ ] Search for `keyfile*.json` pattern
-  - [ ] Handle case when multiple key files are found
-  - [ ] Handle case when no key files are found
-- [ ] Implement Base64 encoding:
-  - [ ] Read wallet file content
-  - [ ] Convert to Base64 string
-  - [ ] Validate encoded content
-- [ ] Implement .env file handling:
-  - [ ] Check for existing .env file
-  - [ ] Create .env if it doesn't exist
-  - [ ] Check for existing DEPLOY_KEY
-  - [ ] Add or update DEPLOY_KEY variable
-  - [ ] Preserve other existing environment variables
-- [ ] Add user feedback messages:
-  - [ ] Success messages
-  - [ ] Error messages
-  - [ ] Warning for existing DEPLOY_KEY
-  - [ ] Instructions for manual setup if needed
+- [x] Add `--init` flag to CLI options
+- [x] Create new `init.ts` command file
+- [x] Implement wallet file detection:
+  - [x] Search for `wallet.json`
+  - [x] Search for `keyfile*.json` pattern
+  - [x] Handle case when multiple key files are found
+  - [x] Handle case when no key files are found
+- [x] Implement Base64 encoding:
+  - [x] Read wallet file content
+  - [x] Convert to Base64 string
+  - [x] Validate encoded content
+- [x] Implement .env file handling:
+  - [x] Check for existing .env file
+  - [x] Create .env if it doesn't exist
+  - [x] Check for existing DEPLOY_KEY
+  - [x] Add or update DEPLOY_KEY variable
+  - [x] Preserve other existing environment variables
+- [x] Add user feedback messages:
+  - [x] Success messages
+  - [x] Error messages
+  - [x] Warning for existing DEPLOY_KEY
+  - [x] Instructions for manual setup if needed
 - [ ] Update documentation:
   - [ ] Add init command to README
   - [ ] Update CHANGELOG
@@ -42,6 +42,6 @@ Create a new `init` command that automates the wallet setup process for first-ti
 - [ ] Test error handling scenarios
 
 ## Security Considerations
-- [ ] Ensure proper file permissions for .env
-- [ ] Validate wallet file content before encoding
-- [ ] Add warning about keeping wallet file secure
+- [x] Ensure proper file permissions for `.env`
+- [x] Validate wallet file content before encoding
+- [x] Add warning about keeping wallet file secure
