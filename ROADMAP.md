@@ -12,11 +12,12 @@
 - [x] Optimize `--launch` command:
   - [x] Make GIT HASH optional (2024-12-19)
   - [x] Make ANT PROCESS optional (2024-12-19)
-- [x] Add `--quick-launch` flag for bypassing checks (2024-12-19)
+- [x] Add `--quick-launch` flag for bypassing checks (2024-12-24)
 - [x] Add `--help` flag for CLI documentation (2024-12-19)
-- [x] Implement TurboDeploy utility for efficient file uploads (2024-12-19)
-- [x] Add comprehensive error handling and user feedback (2024-12-19)
-- [x] Support multiple build folder types (dist, build, .next) (2024-12-19)
+- [x] Implement TurboDeploy utility for efficient file uploads (2024-12-24)
+- [x] Add comprehensive error handling and user feedback (2024-12-24)
+- [x] Support multiple build folder types (dist, build, .next) (2024-12-24)
+- [x] Interactive deployment confirmation (2024-12-24)
 
 ## Short-term Goals
 - [ ] Add comprehensive test suite
@@ -27,6 +28,7 @@
 - [ ] Implement deployment progress bar
 - [ ] Add deployment size estimation
 - [ ] Support for environment variables
+- [ ] Add deployment cost estimation in AR/USD
 
 ## Long-term Goals
 - [ ] Add support for multiple deployment strategies
@@ -34,12 +36,13 @@
 - [ ] Add deployment analytics
 - [ ] Create web interface for deployments
 - [ ] Support for deployment previews
-
+- [ ] Add support for custom deployment hooks
+- [ ] Implement deployment caching
+- [ ] Add support for deployment versioning
 
 ## To-Do's
 - [ ] ESLint
 - [ ] Prettier
-- [ ] Husky
 - [x] Jest
 - [ ] Different commands for different frameworks?
 - [ ] Commander? CLI framework

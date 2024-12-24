@@ -51,3 +51,17 @@ export interface DeployArgs {
     buildExists: boolean;
     sufficientBalance: boolean;
   }
+  
+  export interface CheckResult {
+    success: boolean;
+    message?: string;
+  }
+  
+  export interface PrelaunchCheckResults {
+    wallet: CheckResult;
+    balance: CheckResult;
+    build: CheckResult;
+    ant: CheckResult;
+    git: CheckResult;
+    launchConfirmed: boolean;
+  }

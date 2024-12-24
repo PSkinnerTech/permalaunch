@@ -1,23 +1,22 @@
 import { 
   checkWalletEncoded,
   checkBuildFolder,
-  getDeploymentCost,
-  getBalances,
-  updateAntRecord,
-  getGitTags,
   formatSuccess, 
-  formatError
+  formatError,
+  getGitTags,
+  updateAntRecord
 } from '../utils/index.js';
 import { DeployArgs } from '../types.js';
 import { TurboFactory } from '@ardrive/turbo-sdk';
 import { ArweaveSigner } from '@ar.io/sdk';
 import fs from 'fs';
 import path from 'path';
+import mime from 'mime-types';
 
 export async function quickLaunch(argv: DeployArgs): Promise<void> {
   try {
     // Quick validation of critical requirements
-    if (!checkWalletEncoded()) {
+    if (!process.env.DEPLOY_KEY || !checkWalletEncoded()) {
       throw new Error('DEPLOY_KEY not configured');
     }
 
@@ -27,56 +26,54 @@ export async function quickLaunch(argv: DeployArgs): Promise<void> {
     }
 
     // Parse wallet and initialize Turbo
-    const wallet = JSON.parse(Buffer.from(process.env.DEPLOY_KEY!, 'base64').toString());
+    const wallet = JSON.parse(Buffer.from(process.env.DEPLOY_KEY, 'base64').toString());
     const signer = new ArweaveSigner(wallet);
     const turbo = TurboFactory.authenticated({ signer });
 
-    // Quick balance check
-    const { turboBalance } = await getBalances(process.env.DEPLOY_KEY!);
-    const deploymentCost = await getDeploymentCost(type);
-    
-    if (BigInt(turboBalance) < BigInt(deploymentCost)) {
-      throw new Error('Insufficient balance for deployment');
-    }
-
-    // Prepare deployment
     console.log(formatSuccess('\nPreparing deployment...'));
     
-    // Read build directory
-    const files = fs.readdirSync(type);
-    const manifestItems = files.map(file => ({
-      path: file,
-      id: '' // Will be filled during upload
-    }));
+    const processDirectory = async (dirPath: string, baseDir: string): Promise<Array<{ path: string, id: string }>> => {
+      const files = fs.readdirSync(dirPath);
+      const manifestItems = [];
 
-    // Upload files
-    console.log(formatSuccess('Uploading files...'));
-    for (const item of manifestItems) {
-      const filePath = path.join(type, item.path);
-      const fileContent = fs.readFileSync(filePath);
-      
-      const uploadResult = await turbo.uploadFile({
-        fileStreamFactory: () => Buffer.from(fileContent),
-        fileSizeFactory: () => fileContent.length,
-        dataItemOpts: {
-          tags: [
-            { name: 'Content-Type', value: 'text/html' },
-            ...getGitTags()
-          ]
+      for (const file of files) {
+        const fullPath = path.join(dirPath, file);
+        const stats = fs.statSync(fullPath);
+
+        if (stats.isDirectory()) {
+          manifestItems.push(...await processDirectory(fullPath, baseDir));
+        } else {
+          const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
+          const fileContent = fs.readFileSync(fullPath);
+          const contentType = mime.lookup(fullPath) || 'application/octet-stream';
+          
+          console.log(`Uploading file: ${relativePath}`);
+          const uploadResult = await turbo.uploadFile({
+            fileStreamFactory: () => fs.createReadStream(fullPath),
+            fileSizeFactory: () => stats.size,
+            dataItemOpts: {
+              tags: [
+                { name: 'Content-Type', value: contentType },
+                ...getGitTags()
+              ]
+            }
+          });
+
+          manifestItems.push({ path: relativePath, id: uploadResult.id });
         }
-      });
-      
-      item.id = uploadResult.id;
-    }
+      }
+
+      return manifestItems;
+    };
+
+    const manifestItems = await processDirectory(type, type);
 
     // Create and upload manifest
     console.log(formatSuccess('Creating manifest...'));
     const manifest = {
       manifest: 'arweave/paths',
-      version: '0.1.0',
-      index: {
-        path: 'index.html'
-      },
+      version: '0.2.0',
+      index: { path: 'index.html' },
       paths: Object.fromEntries(
         manifestItems.map(item => [item.path, { id: item.id }])
       )
@@ -84,7 +81,7 @@ export async function quickLaunch(argv: DeployArgs): Promise<void> {
 
     const manifestContent = Buffer.from(JSON.stringify(manifest));
     const manifestResult = await turbo.uploadFile({
-      fileStreamFactory: () => manifestContent,
+      fileStreamFactory: () => Buffer.from(manifestContent),
       fileSizeFactory: () => manifestContent.length,
       dataItemOpts: {
         tags: [
@@ -95,15 +92,17 @@ export async function quickLaunch(argv: DeployArgs): Promise<void> {
     });
 
     console.log(formatSuccess(`\nDeployment successful! Transaction ID: ${manifestResult.id}`));
+    console.log(formatSuccess(`View your deployment at: https://arweave.net/${manifestResult.id}`));
 
     // Update ANT record if configured
-    if (argv.antProcess && argv.undername) {
+    if (argv.antProcess) {
       console.log(formatSuccess('\nUpdating ANT record...'));
       await updateAntRecord(
         argv.antProcess,
         argv.undername,
         manifestResult.id,
-        wallet
+        wallet,
+        getGitTags()
       );
       console.log(formatSuccess('ANT record updated successfully!'));
     }

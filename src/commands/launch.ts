@@ -5,7 +5,8 @@ import {
   formatHighlight,
   delay,
   updateAntRecord,
-  getGitTags
+  getGitTags,
+  checkBuildFolder
 } from '../utils/index.js';
 import { runPrelaunchChecklist } from './checks/index.js';
 import { DeployArgs } from '../types.js';
@@ -30,22 +31,25 @@ export async function launch(argv: DeployArgs): Promise<void> {
       process.exit(1);
     }
 
+    // Get the correct build folder
+    const { exists, type } = checkBuildFolder(argv.deployFolder);
+    if (!exists || !type) {
+      throw new Error('Build folder not found');
+    }
+    argv.deployFolder = type; // Update deployFolder to use detected folder
+
     // Parse wallet from DEPLOY_KEY
     const wallet = JSON.parse(Buffer.from(process.env.DEPLOY_KEY!, 'base64').toString());
 
     // Display deployment info
     console.log(formatHighlight('\nDEPLOYMENT INFO:'));
     console.log('================');
-    console.log(formatSuccess(`Build Folder: ${argv.deployFolder || 'default'}`));
+    console.log(formatSuccess(`Build Folder: ${argv.deployFolder}`));
     if (argv.antProcess) {
       console.log(formatSuccess(`ANT Process: ${argv.antProcess}`));
       console.log(formatSuccess(`Undername: ${argv.undername || '@'}`));
     }
     
-    // Final confirmation
-    console.log(formatWarning('\nStarting deployment in 5 seconds... Press Ctrl+C to cancel'));
-    await delay(5000);
-
     // Deploy using Turbo
     console.log(formatHighlight('\nDEPLOYING TO ARWEAVE:'));
     console.log('====================');

@@ -2,6 +2,7 @@ import {
   formatSuccess, 
   formatError, 
   formatHighlight,
+  formatWarning,
   showCountdown,
   delay
 } from '../../utils/index.js';
@@ -11,10 +12,10 @@ import {
   runBuildCheck,
   runAntCheck,
   runGitCheck,
-  CheckResult,
-  PrelaunchCheckResults
+  CheckResult
 } from './index.js';
-import { DeployArgs } from '../../types.js';
+import { DeployArgs, PrelaunchCheckResults } from '../../types.js';
+import inquirer from 'inquirer';
 
 export async function runPrelaunchChecklist(argv: DeployArgs): Promise<PrelaunchCheckResults> {
   console.log('\n\x1b[35mPRELAUNCH CHECKLIST\x1b[0m');
@@ -25,7 +26,8 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     balance: { success: false },
     build: { success: false },
     ant: { success: false },
-    git: { success: false }
+    git: { success: false },
+    launchConfirmed: false
   };
 
   try {
@@ -48,7 +50,26 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     }
 
     // Run ANT check (optional)
-    results.ant = await runAntCheck(argv.antProcess, argv.undername);
+    const antProcess = argv.antProcess || process.env.ANT_PROCESS;
+    if (antProcess) {
+      console.log('\n\x1b[35mCHECK ANT:\x1b[0m');
+      results.ant = await runAntCheck(antProcess, argv.undername);
+    } else {
+      console.log('\n\x1b[35mCHECK ANT:\x1b[0m');
+      console.log(formatWarning('[   ] No ANT Process configured'));
+      console.log(formatWarning('\nThe ANT isn\'t required to deploy your app onto Arweave, but you should understand'));
+      console.log(formatWarning('that your app\'s url will look something like:'));
+      console.log(formatError('https://arweave.net/[very-long-hash]'));
+      console.log(formatWarning('rather than something like:'));
+      console.log(formatHighlight('https://your-app.ar.io'));
+      console.log(formatWarning('\nTo learn more about ANTs and get your own domain, visit:'));
+      console.log(formatHighlight('https://ar.io/docs\n'));
+      
+      results.ant = { 
+        success: true, 
+        message: 'ANT check skipped - no ANT process provided' 
+      };
+    }
     
     // Run Git check (optional)
     results.git = await runGitCheck();
@@ -56,9 +77,19 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     // Display final summary
     await displaySummary(results);
 
-    // If all critical checks pass, show countdown
+    // If all critical checks pass, ask about launching
     if (results.wallet.success && results.balance.success && results.build.success) {
-      await showCountdown();
+      const { shouldLaunch } = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'shouldLaunch',
+        message: '🚀 Would you like to launch the deployment now?',
+        default: false
+      }]);
+
+      results.launchConfirmed = shouldLaunch;
+      if (shouldLaunch) {
+        await showCountdown();
+      }
     }
 
     return results;

@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.0.3] - 2024-12-24
+### Added
+- Interactive launch confirmation with inquirer
+- Proper content-type detection for all file types
+- Improved file handling for both directories and files
+- Enhanced deployment status messages
+- Deployment URL display after successful upload
+
+### Changed
+- Refactored quickLaunch for better reliability
+- Improved build folder detection and handling
+- Removed redundant 5-second delay from launch sequence
+- Enhanced error handling and feedback
+- Streamlined deployment process
+
+### Fixed
+- EISDIR error in quickLaunch
+- Build folder path resolution
+- Manifest generation and upload process
+- ANT record updates
+
 ## [Unreleased]
 ### Added
 - Individual check commands implementation
@@ -46,6 +67,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Made GIT HASH optional
   - Made ANT PROCESS optional
 
-[Unreleased]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/PSkinnerTech/permalaunch/releases/tag/v0.0.1

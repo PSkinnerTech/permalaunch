@@ -6,13 +6,22 @@ import { BuildInfo } from '../types.js';
 import { formatError } from './display.js';
 
 export function checkBuildFolder(customPath?: string): BuildInfo {
-  const buildFolders = customPath ? 
-    [customPath] : 
-    ['./dist', './build', './.next'];
-
+  const cwd = process.cwd();
+  
+  // If customPath is './dist' (the default), treat it as no custom path
+  const isDefaultPath = customPath === './dist';
+  
+  const buildFolders = (!customPath || isDefaultPath) ? 
+    [
+      path.resolve(cwd, 'dist'),
+      path.resolve(cwd, 'build'),
+      path.resolve(cwd, '.next')
+    ] : 
+    [path.resolve(cwd, customPath)];
+  
   for (const folder of buildFolders) {
     if (fs.existsSync(folder)) {
-      return { exists: true, type: folder };
+      return { exists: true, type: path.relative(cwd, folder) };
     }
   }
   return { exists: false, type: null };
