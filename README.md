@@ -1,4 +1,4 @@
-# PERMALAUNCH
+# Permalaunch
 
 Deploy your web apps to the permaweb with ease! Permalaunch is a CLI tool that simplifies the process of deploying applications to Arweave.
 
