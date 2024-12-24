@@ -26,10 +26,10 @@ Create a new `init` command that automates the wallet setup process for first-ti
   - [x] Error messages
   - [x] Warning for existing DEPLOY_KEY
   - [x] Instructions for manual setup if needed
-- [ ] Update documentation:
-  - [ ] Add init command to README
-  - [ ] Update CHANGELOG
-  - [ ] Update ROADMAP
+- [x] Update documentation:
+  - [x] Add init command to README
+  - [x] Update CHANGELOG
+  - [x] Update ROADMAP
 
 ## Testing Plan
 - [ ] Test with existing wallet.json
@@ -42,6 +42,6 @@ Create a new `init` command that automates the wallet setup process for first-ti
 - [ ] Test error handling scenarios
 
 ## Security Considerations
-- [x] Ensure proper file permissions for `.env`
-- [x] Validate wallet file content before encoding
-- [x] Add warning about keeping wallet file secure
+- [ ] Ensure proper file permissions for .env
+- [ ] Validate wallet file content before encoding
+- [ ] Add warning about keeping wallet file secure
