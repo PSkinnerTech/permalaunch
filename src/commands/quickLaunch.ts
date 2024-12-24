@@ -42,10 +42,25 @@ export async function quickLaunch(argv: DeployArgs): Promise<void> {
     // Prepare deployment
     console.log(formatSuccess('\nPreparing deployment...'));
     
-    // Read build directory
-    const files = fs.readdirSync(type);
+    // Read build directory recursively
+    const getAllFiles = (dirPath: string, arrayOfFiles: string[] = []): string[] => {
+      const files = fs.readdirSync(dirPath);
+
+      files.forEach((file) => {
+        const fullPath = path.join(dirPath, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+          arrayOfFiles = getAllFiles(fullPath, arrayOfFiles);
+        } else {
+          arrayOfFiles.push(fullPath);
+        }
+      });
+
+      return arrayOfFiles;
+    };
+
+    const files = getAllFiles(type);
     const manifestItems = files.map(file => ({
-      path: file,
+      path: path.relative(type, file),
       id: '' // Will be filled during upload
     }));
 

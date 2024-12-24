@@ -5,9 +5,26 @@ import { hideBin } from 'yargs/helpers';
 import { DeployArgs } from './types.js';
 import { handleCommands } from './commands/index.js';
 
-// CLI configuration
 const argv = yargs(hideBin(process.argv))
   .usage('\n\x1b[35mPERMALAUNCH CLI\x1b[0m - Deploy your web apps to the permaweb with ease!\n')
+  .command('init', 'Initialize Permalaunch in your project', {}, (argv) => {
+    handleCommands({
+      init: true,
+      antProcess: '',
+      deployFolder: './dist',
+      undername: '@',
+      launch: false,
+      'quick-launch': false,
+      'prelaunch-checklist': false,
+      'check-wallet': false,
+      'check-balances': false,
+      'check-build': false,
+      'check-ant': false,
+      'check-git': false,
+      help: false,
+      ...argv
+    } as DeployArgs)
+  })
   .option('ant-process', {
     alias: 'a',
     type: 'string',
@@ -15,10 +32,8 @@ const argv = yargs(hideBin(process.argv))
     demandOption: false,
   })
   .option('deploy-folder', {
-    alias: 'd',
     type: 'string',
-    description: 'Folder to deploy (defaults to checking ./dist, ./build, or ./.next in that order)',
-    default: './dist'
+    description: 'Specify custom build folder path'
   })
   .option('undername', {
     alias: 'u',
@@ -80,7 +95,6 @@ const argv = yargs(hideBin(process.argv))
   .alias('help', 'h')
   .parseSync() as DeployArgs;
 
-// Environment variables
 export const DEPLOY_KEY = process.env.DEPLOY_KEY;
 export const ANT_PROCESS = argv.antProcess || process.env.ANT_PROCESS;
 

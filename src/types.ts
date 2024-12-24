@@ -1,4 +1,5 @@
 export interface DeployArgs {
+    init?: boolean;
     antProcess: string;
     deployFolder: string;
     undername: string;

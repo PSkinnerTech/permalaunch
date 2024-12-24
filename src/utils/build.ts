@@ -11,10 +11,22 @@ export function checkBuildFolder(customPath?: string): BuildInfo {
     ['./dist', './build', './.next'];
 
   for (const folder of buildFolders) {
-    if (fs.existsSync(folder)) {
-      return { exists: true, type: folder };
+    const fullPath = path.resolve(process.cwd(), folder);
+    
+    try {
+      const exists = fs.existsSync(fullPath);
+      
+      if (exists) {
+        const stats = fs.statSync(fullPath);
+        if (stats.isDirectory()) {
+          return { exists: true, type: folder };
+        }
+      }
+    } catch (error: unknown) {
+      continue;
     }
   }
+  
   return { exists: false, type: null };
 }
 
@@ -60,24 +72,14 @@ export async function getDeploymentCost(buildFolder: string): Promise<string> {
 
 export function validateBuildFolder(folderPath: string): boolean {
   try {
-    // Check if folder exists
-    if (!fs.existsSync(folderPath)) {
-      return false;
+    // For Next.js builds, check for different structure
+    if (folderPath === './.next') {
+      return fs.existsSync(path.join(folderPath, 'server')) && 
+             fs.existsSync(path.join(folderPath, 'static'));
     }
 
-    // Check if folder is empty
-    const files = fs.readdirSync(folderPath);
-    if (files.length === 0) {
-      return false;
-    }
-
-    // Check for index.html in root or any subdirectory
-    const hasIndexHtml = findIndexHtml(folderPath);
-    if (!hasIndexHtml) {
-      return false;
-    }
-
-    return true;
+    // For traditional builds, check for index.html
+    return findIndexHtml(folderPath);
   } catch (error) {
     console.error(formatError('Error validating build folder:'), error);
     return false;

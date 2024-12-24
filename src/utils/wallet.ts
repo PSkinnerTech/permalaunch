@@ -5,23 +5,47 @@ import { ArweaveSigner } from '@ar.io/sdk';
 import { TurboFactory } from '@ardrive/turbo-sdk';
 import Arweave from 'arweave';
 import inquirer from 'inquirer';
+import dotenv from 'dotenv';
 import { formatSuccess, formatError, formatWarning } from './display.js';
 
 export function checkWalletExists(): boolean {
   return fs.existsSync(path.join(process.cwd(), 'wallet.json'));
 }
 
-export function checkWalletEncoded(): boolean {
+export function checkWalletEncoded(): { isEncoded: boolean; deployKey: string | null } {
   try {
-    const DEPLOY_KEY = process.env.DEPLOY_KEY;
-    if (!DEPLOY_KEY) return false;
-    
-    // Try to decode and parse the wallet to verify it's valid
-    const decoded = Buffer.from(DEPLOY_KEY, 'base64').toString('utf-8');
-    JSON.parse(decoded);
-    return true;
-  } catch (e) {
-    return false;
+    // Load .env file if it exists
+    const envPath = path.join(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      dotenv.config();
+    }
+
+    // Check all environment variables for any that start with DEPLOY_KEY
+    const deployKeyVars = Object.keys(process.env)
+      .filter(key => key.startsWith('DEPLOY_KEY'));
+
+    if (deployKeyVars.length === 0) {
+      return { isEncoded: false, deployKey: null };
+    }
+
+    // Try to parse each potential deploy key
+    for (const key of deployKeyVars) {
+      const value = process.env[key];
+      if (value) {
+        try {
+          const decoded = Buffer.from(value, 'base64').toString();
+          JSON.parse(decoded); // Validate it's valid JSON
+          process.env.DEPLOY_KEY = value; // Set DEPLOY_KEY for compatibility
+          return { isEncoded: true, deployKey: value };
+        } catch {
+          continue;
+        }
+      }
+    }
+
+    return { isEncoded: false, deployKey: null };
+  } catch (error) {
+    return { isEncoded: false, deployKey: null };
   }
 }
 

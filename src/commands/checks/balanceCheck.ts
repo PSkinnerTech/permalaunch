@@ -2,6 +2,7 @@ import {
   getBalances, 
   getDeploymentCost,
   checkBuildFolder,
+  checkWalletEncoded,
   formatSuccess, 
   formatError, 
   formatWarning,
@@ -20,16 +21,17 @@ export async function runBalanceCheck(): Promise<CheckResult> {
   console.log('\n\x1b[35mCHECK BALANCES:\x1b[0m');
 
   try {
-    if (!process.env.DEPLOY_KEY) {
-      console.log(formatError('[   ] No DEPLOY_KEY configured'));
+    const { isEncoded, deployKey } = checkWalletEncoded();
+    if (!isEncoded || !deployKey) {
+      console.log(formatError('[   ] No wallet key configured'));
       return {
         success: false,
-        message: 'DEPLOY_KEY environment variable not found'
+        message: 'No wallet key found in environment'
       };
     }
 
     // Get wallet balances
-    const { turboBalance, arBalance } = await getBalances(process.env.DEPLOY_KEY);
+    const { turboBalance, arBalance } = await getBalances(deployKey);
     
     console.log(formatSuccess(`[ x ] Turbo Balance: ${turboBalance} WINC`));
     console.log(formatSuccess(`[ x ] AR Balance: ${arBalance} AR`));

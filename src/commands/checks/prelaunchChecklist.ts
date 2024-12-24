@@ -15,6 +15,8 @@ import {
   PrelaunchCheckResults
 } from './index.js';
 import { DeployArgs } from '../../types.js';
+import inquirer from 'inquirer';
+import { quickLaunch } from '../quickLaunch.js';
 
 export async function runPrelaunchChecklist(argv: DeployArgs): Promise<PrelaunchCheckResults> {
   console.log('\n\x1b[35mPRELAUNCH CHECKLIST\x1b[0m');
@@ -56,9 +58,22 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     // Display final summary
     await displaySummary(results);
 
-    // If all critical checks pass, show countdown
+    // If all critical checks pass, ask for launch confirmation
     if (results.wallet.success && results.balance.success && results.build.success) {
-      await showCountdown();
+      const { proceed } = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'proceed',
+        message: 'All checks passed. Would you like to initiate launch sequence?',
+        default: false
+      }]);
+
+      if (proceed) {
+        await showCountdown();
+        // Use quickLaunch instead of launch
+        await quickLaunch(argv);
+      } else {
+        console.log(formatHighlight('\nLaunch sequence aborted.'));
+      }
     }
 
     return results;

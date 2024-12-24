@@ -44,15 +44,15 @@ export async function runWalletCheck(): Promise<CheckResult> {
     }
 
     // Check if wallet is encoded
-    const isEncoded = checkWalletEncoded();
-    if (isEncoded) {
-      console.log(formatSuccess('[ x ] Wallet encoded in DEPLOY_KEY'));
+    const { isEncoded, deployKey } = checkWalletEncoded();
+    if (isEncoded && deployKey) {
+      console.log(formatSuccess('[ x ] Wallet encoded in environment'));
       
       // Get and display wallet address
-      const address = await getWalletAddress(process.env.DEPLOY_KEY!);
+      const address = await getWalletAddress(deployKey);
       console.log(formatSuccess(`[ x ] Wallet Address: ${address}`));
     } else {
-      console.log(formatError('[   ] Wallet not encoded in DEPLOY_KEY'));
+      console.log(formatError('[   ] Wallet not encoded in environment'));
       
       // Attempt to handle wallet encoding
       const encoded = await handleWalletEncoding();

@@ -1,8 +1,17 @@
 import { DeployArgs } from '../types.js';
+import { initializeProject } from './init.js';
+import { runPrelaunchChecklist } from './checks/index.js';
+import { launch } from './launch.js';
+import { quickLaunch } from './quickLaunch.js';
 
 export async function handleCommands(argv: DeployArgs): Promise<void> {
+  if (argv.init) {
+    await initializeProject();
+    return;
+  }
+
   if (argv['prelaunch-checklist']) {
-    // Will implement prelaunch checklist handler
+    await runPrelaunchChecklist(argv);
     return;
   }
 
@@ -32,12 +41,12 @@ export async function handleCommands(argv: DeployArgs): Promise<void> {
   }
 
   if (argv.launch) {
-    // Will implement launch handler
+    await launch(argv);
     return;
   }
 
   if (argv['quick-launch']) {
-    // Will implement quick launch handler
+    await quickLaunch(argv);
     return;
   }
 

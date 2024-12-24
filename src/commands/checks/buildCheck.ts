@@ -20,7 +20,7 @@ export async function runBuildCheck(customPath?: string): Promise<CheckResult> {
   console.log('\n\x1b[35mCHECK BUILD:\x1b[0m');
 
   try {
-    // Check for build folder
+    // Check for build folder with all possible paths
     const { exists, type } = checkBuildFolder(customPath);
     
     if (!exists || !type) {
