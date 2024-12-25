@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import mockFs from 'mock-fs';
 import fs from 'fs-extra';
 import path from 'path';
@@ -34,19 +34,38 @@ describe('Init Command', () => {
     });
 
     it('should detect keyfile and create .env file with DEPLOY_KEY', async () => {
-      // Debug: Log the current directory contents before the test
-      console.log('Before test - Files:', await fs.readdir(process.cwd()));
-
       await initCommand.handler();
-
-      // Debug: Log the current directory contents after the test
-      console.log('After test - Files:', await fs.readdir(process.cwd()));
-      
       const envExists = await fs.pathExists('.env');
       expect(envExists).toBe(true);
-
       const envContent = await fs.readFile('.env', 'utf-8');
       expect(envContent).toContain(`DEPLOY_KEY="${BASE64_KEY}"`);
+    });
+  });
+
+  describe('with no wallet file', () => {
+    beforeEach(() => {
+      // Mock an empty directory
+      mockFs({});
+    });
+
+    it('should throw an error when no wallet file is found', async () => {
+      // Mock console methods to capture output
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      
+      // Execute init command and expect it to handle the error
+      await initCommand.handler();
+
+      // Verify error message
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('No Wallet Found')
+      );
+
+      // Verify .env file was not created
+      const envExists = await fs.pathExists('.env');
+      expect(envExists).toBe(false);
+
+      // Clean up mock
+      consoleLogSpy.mockRestore();
     });
   });
 });
