@@ -7,6 +7,7 @@ import { initCommand } from '../commands/init.js';
 describe('Init Command', () => {
   const WALLET_CONTENT = JSON.stringify({ privateKey: 'test-private-key' }, null, 2);
   const BASE64_KEY = Buffer.from(WALLET_CONTENT, 'utf-8').toString('base64');
+  const EXISTING_ENV_CONTENT = 'EXISTING_VAR=some-value\nANOTHER_VAR=another-value\n';
 
   afterEach(() => {
     mockFs.restore();
@@ -97,6 +98,35 @@ describe('Init Command', () => {
       // Clean up mocks
       consoleLogSpy.mockRestore();
       consoleWarnSpy.mockRestore();
+    });
+  });
+
+  describe('with existing .env file', () => {
+    beforeEach(() => {
+      // Mock existing .env file and wallet.json
+      mockFs({
+        'wallet.json': WALLET_CONTENT,
+        '.env': EXISTING_ENV_CONTENT
+      });
+    });
+
+    it('should preserve existing env variables while adding DEPLOY_KEY', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      
+      await initCommand.handler();
+
+      // Verify .env file exists
+      const envExists = await fs.pathExists('.env');
+      expect(envExists).toBe(true);
+
+      // Read .env content and verify
+      const envContent = await fs.readFile('.env', 'utf-8');
+      expect(envContent).toContain('EXISTING_VAR=some-value');
+      expect(envContent).toContain('ANOTHER_VAR=another-value');
+      expect(envContent).toContain(`DEPLOY_KEY="${BASE64_KEY}"`);
+
+      // Clean up mock
+      consoleLogSpy.mockRestore();
     });
   });
 });
