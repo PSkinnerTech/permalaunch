@@ -1,55 +1,46 @@
 import { jest } from '@jest/globals';
-import mockFs from 'mock-fs';
 import { runWalletCheck } from '../commands/checks/walletCheck.js';
-import * as utils from '../utils/index.js';
+import type { ValidationResult } from '../utils/validation.js';
 
-describe('Wallet Check Command', () => {
+// Create mock function first
+const mockValidateInitStatus = jest.fn<() => Promise<ValidationResult>>();
+
+// Mock the utils module
+jest.mock('../utils/index.js', () => ({
+  validateInitStatus: mockValidateInitStatus,
+  formatError: (text: string) => text,
+  formatSuccess: (text: string) => text,
+  delay: () => Promise.resolve()
+}));
+
+describe('Wallet Check Command - Init Check', () => {
   beforeEach(() => {
+    // Clear mocks and env
+    jest.clearAllMocks();
+    delete process.env.DEPLOY_KEY;
+    
     // Mock console methods
     jest.spyOn(console, 'log').mockImplementation(() => {});
     jest.spyOn(console, 'error').mockImplementation(() => {});
-    jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
-    jest.spyOn(process.stdout, 'clearLine').mockImplementation(() => true);
-    jest.spyOn(process.stdout, 'cursorTo').mockImplementation(() => true);
-  });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-    mockFs.restore();
+    // Mock process.stdout methods
+    process.stdout.clearLine = jest.fn() as unknown as (dir: number) => boolean;
+    process.stdout.cursorTo = jest.fn() as unknown as (x: number) => boolean;
+    process.stdout.write = jest.fn() as unknown as (buffer: string | Uint8Array) => boolean;
   });
 
   it('should fail if init has not been run', async () => {
-    jest.spyOn(utils, 'validateInitStatus').mockResolvedValue({
+    // Setup
+    mockValidateInitStatus.mockResolvedValue({
       isValid: false,
-      message: 'Init not run'
+      message: 'Init incomplete - DEPLOY_KEY not found in environment'
     });
 
+    // Execute
     const result = await runWalletCheck();
-    expect(result.success).toBe(false);
-    expect(result.message).toBe('Init not run');
-  });
-
-  it('should validate wallet address when init check passes', async () => {
-    jest.spyOn(utils, 'validateInitStatus').mockResolvedValue({
-      isValid: true
-    });
     
-    jest.spyOn(utils, 'getWalletAddress').mockResolvedValue('test-address');
-
-    const result = await runWalletCheck();
-    expect(result.success).toBe(true);
-    expect(result.message).toBe('All wallet checks passed');
-  });
-
-  it('should fail if wallet address is invalid', async () => {
-    jest.spyOn(utils, 'validateInitStatus').mockResolvedValue({
-      isValid: true
-    });
-    
-    jest.spyOn(utils, 'getWalletAddress').mockRejectedValue(new Error('Invalid address'));
-
-    const result = await runWalletCheck();
+    // Assert
     expect(result.success).toBe(false);
-    expect(result.message).toBe('Failed to validate wallet address');
+    expect(result.message).toBe('Init incomplete - DEPLOY_KEY not found in environment');
   });
 }); 

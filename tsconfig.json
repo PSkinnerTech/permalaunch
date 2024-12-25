@@ -10,8 +10,12 @@
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
       "declaration": true,
-      "types": ["node", "jest"]
+      "types": ["node", "jest"],
+      "baseUrl": "./src",
+      "paths": {
+        "@/*": ["*"]
+      }
     },
-    "include": ["src/**/*", "src/types/*.d.ts"],
+    "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]
   }

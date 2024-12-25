@@ -1,8 +1,10 @@
 import { 
   validateInitStatus,
   getWalletAddress,
+  getBalances,
   formatSuccess,
   formatError,
+  formatWarning,
   delay
 } from '../../utils/index.js';
 import { CheckResult } from './index.js';
@@ -39,6 +41,15 @@ export async function runWalletCheck(): Promise<CheckResult> {
         success: false,
         message: 'Failed to validate wallet address'
       };
+    }
+
+    // Add balance check
+    const { turboBalance, arBalance } = await getBalances(process.env.DEPLOY_KEY!);
+    console.log(formatSuccess(`[ x ] WINC Balance: ${turboBalance}`));
+    console.log(formatSuccess(`[ x ] AR Balance: ${arBalance}`));
+
+    if (turboBalance === '0' && arBalance === '0') {
+      console.log(formatWarning('\nWARNING: Wallet has no funds. Visit https://turbo.ar.io to get started.'));
     }
 
     return { 
