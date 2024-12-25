@@ -1,11 +1,6 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
-import { promisify } from 'util';
 import { formatSuccess, formatError, formatWarning } from '../utils/display.js';
-
-const readDir = promisify(fs.readdir);
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
 
 const WALLETS_DIR = process.cwd();
 const ENV_FILE = '.env';
@@ -15,7 +10,7 @@ const GITIGNORE_FILE = '.gitignore';
  * Search for wallet.json or keyfile*.json in the current directory.
  */
 const findWalletFiles = async (): Promise<string[]> => {
-  const files = await readDir(WALLETS_DIR);
+  const files = await fs.readdir(WALLETS_DIR);
   return files.filter(
     (file) => file === 'wallet.json' || /^keyfile.*\.json$/.test(file)
   );
@@ -39,7 +34,7 @@ const updateEnvFile = async (base64Key: string): Promise<void> => {
   let envContent = '';
 
   try {
-    envContent = await readFile(envPath, 'utf-8');
+    envContent = await fs.readFile(envPath, 'utf-8');
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
       throw error;
@@ -52,7 +47,7 @@ const updateEnvFile = async (base64Key: string): Promise<void> => {
   lines.push(deployKeyLine);
   const newEnvContent = lines.join('\n') + '\n';
 
-  await writeFile(envPath, newEnvContent, { mode: 0o600 });
+  await fs.writeFile(envPath, newEnvContent, { mode: 0o600 });
 };
 
 /**
@@ -64,7 +59,7 @@ const checkGitignore = async (walletFile: string): Promise<void> => {
   let gitignoreContent = '';
 
   try {
-    gitignoreContent = await readFile(gitignorePath, 'utf-8');
+    gitignoreContent = await fs.readFile(gitignorePath, 'utf-8');
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       console.warn(formatWarning(`.gitignore file not found. Please add '${ENV_FILE}' and '${walletFile}' to .gitignore.`));
@@ -108,7 +103,7 @@ const init = async (): Promise<void> => {
 
     const walletFile = walletFiles[0];
     const walletPath = path.join(WALLETS_DIR, walletFile);
-    const walletContent = await readFile(walletPath, 'utf-8');
+    const walletContent = await fs.readFile(walletPath, 'utf-8');
     const base64Key = encodeBase64(walletContent);
 
     await updateEnvFile(base64Key);

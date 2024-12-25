@@ -18,7 +18,7 @@
 		"build": "tsc",
 		"watch": "tsc -w",
 		"link": "npm link",
-		"test": "jest"
+		"test": "NODE_OPTIONS=--experimental-vm-modules jest src/**/*.test.ts"
 	},
 	"bin": {
 		"permalaunch": "./dist/index.js"

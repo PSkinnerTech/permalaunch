@@ -32,7 +32,7 @@ Create a new `init` command that automates the wallet setup process for first-ti
   - [x] Update ROADMAP
 
 ## Testing Plan
-- [ ] Test with existing wallet.json
+- [x] Test with existing wallet.json
 - [ ] Test with keyfile*.json pattern
 - [ ] Test with no wallet file
 - [ ] Test with multiple wallet files
