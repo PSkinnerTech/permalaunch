@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.0.4] - 2024-12-26
+### Added
+- New `--init` command for automated wallet setup
+- Secure .env file handling with proper permissions
+- Wallet file validation and security checks
+- Comprehensive test suite for init command
+- Enhanced error handling for wallet setup
+
+### Security
+- Added file permission restrictions for .env files
+- Implemented wallet content validation
+- Added security warnings for wallet handling
+- Enhanced gitignore validation
+
 ## [0.0.3] - 2024-12-24
 ### Added
 - Interactive launch confirmation with inquirer
@@ -67,7 +81,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Made GIT HASH optional
   - Made ANT PROCESS optional
 
-[Unreleased]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.3...HEAD
-[0.0.3]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.2...v0.0.3
+[Unreleased]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.2...HEAD
 [0.0.2]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/PSkinnerTech/permalaunch/releases/tag/v0.0.1
+[0.0.4]: https://github.com/PSkinnerTech/permalaunch/compare/v0.0.3...v0.0.4

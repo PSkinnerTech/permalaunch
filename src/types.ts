@@ -11,6 +11,7 @@ export interface DeployArgs {
     'check-ant': boolean;
     'check-git': boolean;
     'help': boolean;
+    'init': boolean;
   }
   
   export interface ArweaveManifest {

@@ -9,6 +9,11 @@
   - [x] `--check-build` (2024-12-19)
   - [x] `--check-ant` (2024-12-19)
   - [x] `--check-git` (2024-12-19)
+- [x] `--init` command for secure wallet setup (2024-12-26)
+  - [x] Automated wallet detection
+  - [x] Secure .env file creation
+  - [x] File permission handling
+  - [x] Comprehensive validation
 - [x] Optimize `--launch` command:
   - [x] Make GIT HASH optional (2024-12-19)
   - [x] Make ANT PROCESS optional (2024-12-19)

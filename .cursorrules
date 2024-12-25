@@ -1,0 +1,95 @@
+include:
+  # Core implementation files for the init command
+  - src/commands/init.ts
+  - src/utils/wallet.ts
+  - src/utils/env.ts
+  - src/types/wallet.ts
+  - src/constants.ts
+  - tests/init.test.ts
+
+# Key patterns to understand the codebase context
+patterns:
+  - pattern: "import.*from ['\"](.*?)['\"]"
+    description: "Track dependencies and module relationships"
+  
+  - pattern: "export (function|const|interface|type) (\w+)"
+    description: "Identify exported functionality and types"
+  
+  - pattern: "DEPLOY_KEY[=:].*"
+    description: "Track deployment key management"
+  
+  - pattern: "(wallet\.json|keyfile.*\.json)"
+    description: "Monitor wallet file patterns"
+
+# Watch for specific file operations that are critical for the init command
+watch:
+  - pattern: ".*fs\.(readFile|writeFile|access).*"
+    description: "Track file system operations for wallet and .env handling"
+  
+  - pattern: ".*process\.env\..*"
+    description: "Monitor environment variable access"
+  
+  - pattern: ".*Base64\.(encode|decode).*"
+    description: "Track Base64 encoding/decoding operations"
+
+# Important context for understanding the codebase
+context: |
+  This CLI tool manages deployment keys for a blockchain application.
+  Key features:
+  - Automated wallet file detection and processing
+  - Secure environment variable management
+  - Base64 encoding of wallet data
+  - Cross-platform compatibility (Windows/Unix)
+  
+  Security considerations:
+  - Wallet files contain sensitive private keys
+  - Environment variables must be properly secured
+  - File permissions must be properly set
+  
+  Testing requirements:
+  - All file operations must be tested
+  - Error cases must be handled gracefully
+  - Cross-platform compatibility must be verified
+
+# Specific rules for AI assistance
+rules:
+  - description: "Ensure type safety"
+    match:
+      contains: "function"
+    suggest: "Add TypeScript type annotations for parameters and return values"
+  
+  - description: "Implement error handling"
+    match:
+      contains: "try"
+    suggest: "Add comprehensive error messages and proper error handling"
+  
+  - description: "Secure file operations"
+    match:
+      contains: "writeFile"
+    suggest: "Ensure proper file permissions and secure content handling"
+  
+  - description: "Environment variable management"
+    match:
+      contains: "process.env"
+    suggest: "Validate environment variables and handle missing values"
+
+ignore:
+  - "node_modules/**"
+  - "dist/**"
+  - "*.log"
+  - ".git/**"
+  - "coverage/**"
+
+# Styling and formatting requirements
+style:
+  typescript:
+    strict: true
+    preferConst: true
+    noImplicitAny: true
+    functionStyle: "arrow"
+    
+  formatting:
+    useSemicolons: true
+    singleQuote: true
+    trailingComma: "es5"
+    printWidth: 80
