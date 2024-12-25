@@ -35,6 +35,10 @@ const updateEnvFile = async (base64Key: string): Promise<void> => {
 
   try {
     envContent = await fs.readFile(envPath, 'utf-8');
+    // Check if DEPLOY_KEY already exists
+    if (envContent.includes('DEPLOY_KEY=')) {
+      console.warn('Existing DEPLOY_KEY found in .env file. The key will be updated.');
+    }
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
       throw error;
