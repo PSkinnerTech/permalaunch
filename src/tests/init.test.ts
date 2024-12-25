@@ -68,4 +68,35 @@ describe('Init Command', () => {
       consoleLogSpy.mockRestore();
     });
   });
+
+  describe('with multiple wallet files', () => {
+    beforeEach(() => {
+      // Mock multiple wallet files
+      mockFs({
+        'wallet.json': WALLET_CONTENT,
+        'keyfile-123.json': WALLET_CONTENT,
+        'keyfile-456.json': WALLET_CONTENT
+      });
+    });
+
+    it('should warn about multiple wallet files and not create .env', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      
+      await initCommand.handler();
+
+      // Verify warning about multiple wallet files
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Multiple wallet files found')
+      );
+
+      // Verify .env file was not created
+      const envExists = await fs.pathExists('.env');
+      expect(envExists).toBe(false);
+
+      // Clean up mocks
+      consoleLogSpy.mockRestore();
+      consoleWarnSpy.mockRestore();
+    });
+  });
 });

@@ -93,7 +93,7 @@ const init = async (): Promise<void> => {
     }
 
     if (walletFiles.length > 1) {
-      console.log(
+      console.warn(
         formatWarning(
           'Multiple wallet files found. Please ensure only one wallet file is present.'
         )

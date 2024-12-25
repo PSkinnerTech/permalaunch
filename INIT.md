@@ -35,7 +35,7 @@ Create a new `init` command that automates the wallet setup process for first-ti
 - [x] Test with existing wallet.json
 - [x] Test with keyfile*.json pattern
 - [x] Test with no wallet file
-- [ ] Test with multiple wallet files
+- [x] Test with multiple wallet files
 - [ ] Test with existing .env file
 - [ ] Test with no .env file
 - [ ] Test with existing DEPLOY_KEY
