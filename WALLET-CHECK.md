@@ -12,27 +12,27 @@ The wallet check command overlaps with init in several areas:
 3. Enhance user feedback and guidance
 
 ## Implementation Checklist
-- [ ] Refactor wallet checks to use init command utilities
-- [ ] Update wallet check flow:
-  - [ ] Check if init has been run
-  - [ ] Verify DEPLOY_KEY validity
-  - [ ] Validate wallet address
+- [x] Refactor wallet checks to use init command utilities
+- [x] Update wallet check flow:
+  - [x] Check if init has been run
+  - [x] Verify DEPLOY_KEY validity
+  - [x] Validate wallet address
   - [ ] Check wallet balances
 - [ ] Improve error messages and user guidance
 - [ ] Add progress indicators
 - [ ] Update documentation
 
 ## Testing Plan
-- [ ] Test after successful init
-- [ ] Test without running init first
-- [ ] Test with invalid DEPLOY_KEY
-- [ ] Test with valid DEPLOY_KEY but invalid wallet
+- [x] Test after successful init
+- [x] Test without running init first
+- [x] Test with invalid DEPLOY_KEY
+- [x] Test with valid DEPLOY_KEY but invalid wallet
 - [ ] Test balance checking
 - [ ] Test error scenarios
 
 ## Security Considerations
-- [ ] Ensure secure handling of DEPLOY_KEY
-- [ ] Validate wallet address format
+- [x] Ensure secure handling of DEPLOY_KEY
+- [x] Validate wallet address format
 - [ ] Protect against malformed wallet data
 - [ ] Handle sensitive data display appropriately
 
@@ -41,3 +41,4 @@ The wallet check command overlaps with init in several areas:
 - [ ] Add examples to README
 - [ ] Update error message documentation
 - [ ] Document relationship with init command
+- [ ] 

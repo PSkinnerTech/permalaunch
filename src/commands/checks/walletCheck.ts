@@ -1,12 +1,8 @@
 import { 
-  checkWalletExists, 
-  checkWalletEncoded, 
-  checkWalletInGitignore,
-  handleWalletEncoding,
+  validateInitStatus,
   getWalletAddress,
   formatSuccess,
   formatError,
-  formatWarning,
   delay
 } from '../../utils/index.js';
 import { CheckResult } from './index.js';
@@ -22,46 +18,27 @@ export async function runWalletCheck(): Promise<CheckResult> {
   console.log('\n\x1b[35mCHECK WALLET:\x1b[0m');
   
   try {
-    // Check if wallet.json exists
-    const walletExists = checkWalletExists();
-    if (walletExists) {
-      console.log(formatSuccess('[ x ] wallet.json found'));
-    } else {
-      console.log(formatError('[   ] wallet.json not found'));
+    // Check if init has been run
+    const initStatus = await validateInitStatus();
+    if (!initStatus.isValid) {
+      console.log(formatError(`[   ] Init check failed: ${initStatus.message}`));
       return { 
         success: false, 
-        message: 'wallet.json not found in project root' 
+        message: initStatus.message 
       };
     }
+    console.log(formatSuccess('[ x ] Init check passed'));
 
-    // Check if wallet is in .gitignore
-    const inGitignore = checkWalletInGitignore();
-    if (inGitignore) {
-      console.log(formatSuccess('[ x ] wallet.json in .gitignore'));
-    } else {
-      console.log(formatWarning('[   ] wallet.json not in .gitignore'));
-      console.log(formatWarning('\nWARNING: Your wallet.json should be in your .gitignore file to prevent accidentally committing it to your repository.'));
-    }
-
-    // Check if wallet is encoded
-    const isEncoded = checkWalletEncoded();
-    if (isEncoded) {
-      console.log(formatSuccess('[ x ] Wallet encoded in DEPLOY_KEY'));
-      
-      // Get and display wallet address
+    // Get and validate wallet address
+    try {
       const address = await getWalletAddress(process.env.DEPLOY_KEY!);
       console.log(formatSuccess(`[ x ] Wallet Address: ${address}`));
-    } else {
-      console.log(formatError('[   ] Wallet not encoded in DEPLOY_KEY'));
-      
-      // Attempt to handle wallet encoding
-      const encoded = await handleWalletEncoding();
-      if (!encoded) {
-        return { 
-          success: false, 
-          message: 'Wallet encoding process incomplete' 
-        };
-      }
+    } catch (error) {
+      console.log(formatError('[   ] Invalid wallet address'));
+      return {
+        success: false,
+        message: 'Failed to validate wallet address'
+      };
     }
 
     return { 
