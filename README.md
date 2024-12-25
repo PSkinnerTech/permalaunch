@@ -19,9 +19,9 @@ When this tool is ready for production, it will be renamed, this CLI will be dep
 
 ## Quick Start
 
-1. Set your deployment key:
+1. Initialize your deployment key:
 ```bash
-export DEPLOY_KEY=your_base64_encoded_key
+npx permalaunch --init
 ```
 
 2. Deploy your app:
@@ -33,9 +33,10 @@ npx permalaunch --launch
 
 ### Basic Commands
 
-For a quick launch, use the following command:
 ```bash
-npx permalaunch --quick-launch
+npx permalaunch --init          # Set up your wallet securely
+npx permalaunch --launch       # Full deployment with checks
+npx permalaunch --quick-launch # Quick deployment without checks
 ```
 
 ### Individual Check Commands
