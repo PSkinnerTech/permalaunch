@@ -272,4 +272,98 @@ describe('Init Command', () => {
       });
     });
   });
+
+  describe('security features', () => {
+    describe('file permissions', () => {
+      beforeEach(() => {
+        mockFs({
+          'wallet.json': WALLET_CONTENT,
+          '.gitignore': '.env\nwallet.json'
+        });
+      });
+
+      it('should set correct permissions on .env file', async () => {
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        
+        // Reset the fs mock for readdir
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['wallet.json']));
+        
+        // Run the init command
+        await initCommand.handler();
+        
+        // Wait a moment for file operations to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Verify .env file exists and has correct permissions
+        const envExists = await fs.pathExists('.env');
+        expect(envExists).toBe(true);
+        
+        const stats = await fs.stat('.env');
+        expect(stats.mode & 0o777).toBe(0o600);
+
+        // Clean up
+        consoleLogSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
+        consoleErrorSpy.mockRestore();
+      });
+    });
+
+    describe('wallet validation', () => {
+      beforeEach(() => {
+        // Reset all mocks
+        jest.restoreAllMocks();
+        mockFs({
+          'wallet.json': '{ "notAPrivateKey": "test" }',
+          '.gitignore': '.env\nwallet.json'
+        });
+      });
+
+      it('should reject invalid wallet JSON', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+        
+        // Reset the fs mock for readdir
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['wallet.json']));
+        
+        await initCommand.handler();
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Invalid wallet format - missing privateKey')
+        );
+
+        // Clean up
+        consoleErrorSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
+        consoleLogSpy.mockRestore();
+      });
+
+      it('should show security warning after successful initialization', async () => {
+        mockFs({
+          'wallet.json': WALLET_CONTENT,
+          '.gitignore': '.env\nwallet.json'
+        });
+
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+        const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        
+        // Reset the fs mock for readdir
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['wallet.json']));
+        
+        await initCommand.handler();
+
+        expect(consoleLogSpy).toHaveBeenCalledWith(
+          expect.stringContaining('IMPORTANT: Keep your wallet file secure')
+        );
+
+        // Clean up
+        consoleLogSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
+        consoleErrorSpy.mockRestore();
+      });
+    });
+  });
 });

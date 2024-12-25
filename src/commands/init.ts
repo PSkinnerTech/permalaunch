@@ -147,7 +147,13 @@ export const initCommand = {
       
       try {
         walletContent = await fs.readFile(walletPath, 'utf-8');
-        JSON.parse(walletContent); // Validate JSON
+        const parsed = JSON.parse(walletContent);
+        
+        // Validate wallet structure
+        if (!parsed.privateKey) {
+          console.error('Initialization failed: Invalid wallet format - missing privateKey');
+          return;
+        }
       } catch (error) {
         console.error('Initialization failed: Invalid wallet file format');
         return;
@@ -158,6 +164,7 @@ export const initCommand = {
       await checkGitignore(walletFiles[0]);
 
       console.log(formatSuccess('DEPLOY_KEY has been set successfully in .env file.'));
+      console.log(formatWarning('\nIMPORTANT: Keep your wallet file secure and never commit it to version control.'));
     } catch (error) {
       console.error(`Initialization failed: ${(error as Error).message}`);
     }
