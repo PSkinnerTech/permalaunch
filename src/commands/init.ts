@@ -127,8 +127,39 @@ const init = async (): Promise<void> => {
  */
 export const initCommand = {
   command: 'init',
-  describe: 'Initialize deployment key setup',
-  handler: async (): Promise<void> => {
-    await init();
-  },
+  describe: 'Initialize deployment key from wallet file',
+  handler: async () => {
+    try {
+      const walletFiles = await findWalletFiles();
+      
+      if (walletFiles.length > 1) {
+        console.warn('Multiple wallet files found. Please ensure only one wallet file exists in the project root.');
+        return;
+      }
+
+      if (walletFiles.length === 0) {
+        console.log('No Wallet Found. Please add your exported wallet file to the root of the project. Be sure to add the wallet to .gitignore immediately after.');
+        return;
+      }
+
+      const walletPath = path.join(process.cwd(), walletFiles[0]);
+      let walletContent;
+      
+      try {
+        walletContent = await fs.readFile(walletPath, 'utf-8');
+        JSON.parse(walletContent); // Validate JSON
+      } catch (error) {
+        console.error('Initialization failed: Invalid wallet file format');
+        return;
+      }
+
+      const base64Key = Buffer.from(walletContent, 'utf-8').toString('base64');
+      await updateEnvFile(base64Key);
+      await checkGitignore(walletFiles[0]);
+
+      console.log(formatSuccess('DEPLOY_KEY has been set successfully in .env file.'));
+    } catch (error) {
+      console.error(`Initialization failed: ${(error as Error).message}`);
+    }
+  }
 };

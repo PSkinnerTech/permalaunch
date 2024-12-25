@@ -199,4 +199,77 @@ describe('Init Command', () => {
       consoleWarnSpy.mockRestore();
     });
   });
+
+  describe('error handling scenarios', () => {
+    const WALLET_CONTENT = JSON.stringify({ privateKey: 'test-private-key' }, null, 2);
+    const EXISTING_ENV_CONTENT = 'EXISTING_VAR=some-value\nANOTHER_VAR=another-value\n';
+    const mockExit = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    
+    describe('with invalid wallet file', () => {
+      beforeEach(() => {
+        mockFs({
+          'wallet.json': '{invalid:json:content',  // Malformed JSON that will fail to parse
+          '.gitignore': '.env\nwallet.json'
+        });
+      });
+
+      it('should handle invalid JSON in wallet file', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // Changed back to error
+        
+        await initCommand.handler();
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Initialization failed') // Updated error message
+        );
+
+        consoleErrorSpy.mockRestore();
+      });
+    });
+
+    describe('with permission errors', () => {
+      beforeEach(() => {
+        mockFs({
+          'wallet.json': WALLET_CONTENT,
+          '.env': mockFs.file({
+            content: EXISTING_ENV_CONTENT,
+            mode: 0o444  // Read-only
+          })
+        });
+      });
+
+      it('should handle permission errors when writing .env', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        
+        await initCommand.handler();
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Initialization failed: EACCES')
+        );
+
+        consoleErrorSpy.mockRestore();
+      });
+    });
+
+    describe('with filesystem errors', () => {
+      beforeEach(() => {
+        mockFs({
+          'wallet.json': WALLET_CONTENT
+        });
+      });
+
+      it('should handle fs errors when reading directory', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.reject(new Error('Filesystem error')));
+        
+        await initCommand.handler();
+
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          expect.stringContaining('Initialization failed: Filesystem error')
+        );
+
+        consoleErrorSpy.mockRestore();
+      });
+    });
+  });
 });
