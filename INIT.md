@@ -42,6 +42,14 @@ Create a new `init` command that automates the wallet setup process for first-ti
 - [ ] Test error handling scenarios
 
 ## Security Considerations
-- [ ] Ensure proper file permissions for .env
-- [ ] Validate wallet file content before encoding
-- [ ] Add warning about keeping wallet file secure
+- [x] Ensure proper file permissions for .env
+  - Implemented with `mode: 0o600` (owner read/write only)
+  - Verified with file permission tests
+- [x] Validate wallet file content before encoding
+  - Added JSON parsing validation
+  - Added `privateKey` property check
+  - Tested with invalid wallet content
+- [x] Add warning about keeping wallet file secure
+  - Added warning message after successful initialization
+  - Verified with console output tests
+  - Added `.gitignore` checks
