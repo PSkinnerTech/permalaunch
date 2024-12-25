@@ -129,4 +129,36 @@ describe('Init Command', () => {
       consoleLogSpy.mockRestore();
     });
   });
+
+  describe('with no .env file', () => {
+    beforeEach(() => {
+      // Mock only wallet.json, no .env
+      mockFs({
+        'wallet.json': WALLET_CONTENT
+      });
+    });
+
+    it('should create new .env file with DEPLOY_KEY', async () => {
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      
+      await initCommand.handler();
+
+      // Verify .env file was created
+      const envExists = await fs.pathExists('.env');
+      expect(envExists).toBe(true);
+
+      // Read .env content and verify
+      const envContent = await fs.readFile('.env', 'utf-8');
+      // Use trim() to handle any extra whitespace
+      expect(envContent.trim()).toBe(`DEPLOY_KEY="${BASE64_KEY}"`);
+
+      // Verify success message
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        expect.stringContaining('DEPLOY_KEY has been set successfully in .env file')
+      );
+
+      // Clean up mock
+      consoleLogSpy.mockRestore();
+    });
+  });
 });
