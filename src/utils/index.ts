@@ -42,3 +42,6 @@ export {
     displayGitStatus,
     getGitTags
 } from './git.js';
+
+// Validation utilities
+export { validateInitStatus, type ValidationResult } from './validation.js';

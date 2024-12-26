@@ -1,9 +1,7 @@
 import { 
-  checkWalletExists, 
-  checkWalletEncoded, 
-  checkWalletInGitignore,
-  handleWalletEncoding,
+  validateInitStatus,
   getWalletAddress,
+  getBalances,
   formatSuccess,
   formatError,
   formatWarning,
@@ -22,46 +20,36 @@ export async function runWalletCheck(): Promise<CheckResult> {
   console.log('\n\x1b[35mCHECK WALLET:\x1b[0m');
   
   try {
-    // Check if wallet.json exists
-    const walletExists = checkWalletExists();
-    if (walletExists) {
-      console.log(formatSuccess('[ x ] wallet.json found'));
-    } else {
-      console.log(formatError('[   ] wallet.json not found'));
+    // Check if init has been run
+    const initStatus = await validateInitStatus();
+    if (!initStatus.isValid) {
+      console.log(formatError(`[   ] Init check failed: ${initStatus.message}`));
       return { 
         success: false, 
-        message: 'wallet.json not found in project root' 
+        message: initStatus.message 
+      };
+    }
+    console.log(formatSuccess('[ x ] Init check passed'));
+
+    // Get and validate wallet address
+    try {
+      const address = await getWalletAddress(process.env.DEPLOY_KEY!);
+      console.log(formatSuccess(`[ x ] Wallet Address: ${address}`));
+    } catch (error) {
+      console.log(formatError('[   ] Invalid wallet address'));
+      return {
+        success: false,
+        message: 'Failed to validate wallet address'
       };
     }
 
-    // Check if wallet is in .gitignore
-    const inGitignore = checkWalletInGitignore();
-    if (inGitignore) {
-      console.log(formatSuccess('[ x ] wallet.json in .gitignore'));
-    } else {
-      console.log(formatWarning('[   ] wallet.json not in .gitignore'));
-      console.log(formatWarning('\nWARNING: Your wallet.json should be in your .gitignore file to prevent accidentally committing it to your repository.'));
-    }
+    // Add balance check
+    const { turboBalance, arBalance } = await getBalances(process.env.DEPLOY_KEY!);
+    console.log(formatSuccess(`[ x ] WINC Balance: ${turboBalance}`));
+    console.log(formatSuccess(`[ x ] AR Balance: ${arBalance}`));
 
-    // Check if wallet is encoded
-    const isEncoded = checkWalletEncoded();
-    if (isEncoded) {
-      console.log(formatSuccess('[ x ] Wallet encoded in DEPLOY_KEY'));
-      
-      // Get and display wallet address
-      const address = await getWalletAddress(process.env.DEPLOY_KEY!);
-      console.log(formatSuccess(`[ x ] Wallet Address: ${address}`));
-    } else {
-      console.log(formatError('[   ] Wallet not encoded in DEPLOY_KEY'));
-      
-      // Attempt to handle wallet encoding
-      const encoded = await handleWalletEncoding();
-      if (!encoded) {
-        return { 
-          success: false, 
-          message: 'Wallet encoding process incomplete' 
-        };
-      }
+    if (turboBalance === '0' && arBalance === '0') {
+      console.log(formatWarning('\nWARNING: Wallet has no funds. Visit https://turbo.ar.io to get started.'));
     }
 
     return { 
@@ -76,3 +64,17 @@ export async function runWalletCheck(): Promise<CheckResult> {
     };
   }
 }
+
+export const command = 'check wallet';
+export const desc = 'Validates wallet setup and configuration';
+export const builder = {};
+
+// Add detailed help text
+export const help = `
+Validates your wallet configuration:
+- Checks if initialization has been completed
+- Verifies DEPLOY_KEY format and validity
+- Validates wallet address
+
+Note: For balance checking, use the 'check balance' command instead.
+`;

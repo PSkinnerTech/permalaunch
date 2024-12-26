@@ -1,18 +1,21 @@
-/** @type {import('jest').Config} */
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  testMatch: [
+    '**/src/**/*.test.ts',
+    '**/tests/**/*.test.ts'
+  ],
   transform: {
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        useESM: true,
-      },
-    ],
+    '^.+\\.tsx?$': ['ts-jest', {
+      useESM: true
+    }]
   },
   extensionsToTreatAsEsm: ['.ts'],
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-} 
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^(\\.{1,2}/.*)\\.ts$': '$1',
+    '^(\\.{1,2}/.*?)$': '$1'
+  }
+}; 
