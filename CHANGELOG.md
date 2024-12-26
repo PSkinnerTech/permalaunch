@@ -4,7 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.0.4] - 2024-12-26
+## [0.0.5] - 2024-12-26
+### Added
+- Comprehensive test suite for wallet check command
+- Enhanced documentation structure and organization
+- Clear separation between wallet and balance checks
+
+### Changed
+- Moved documentation files to /docs folder
+- Refactored wallet check to focus on core validation
+- Separated balance checking into its own command
+
+### Documentation
+- Added ERROR-MESSAGES.md for centralized error documentation
+- Created COMMAND-RELATIONSHIPS.md for architecture clarity
+- Updated WALLET-CHECK.md with completed items
+- Added BALANCES-CHECK.md for upcoming implementation
+
+## [0.0.4] - 2024-12-25
 ### Added
 - New `--init` command for automated wallet setup
 - Secure .env file handling with proper permissions
