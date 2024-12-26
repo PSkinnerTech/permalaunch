@@ -64,3 +64,17 @@ export async function runWalletCheck(): Promise<CheckResult> {
     };
   }
 }
+
+export const command = 'check wallet';
+export const desc = 'Validates wallet setup and configuration';
+export const builder = {};
+
+// Add detailed help text
+export const help = `
+Validates your wallet configuration:
+- Checks if initialization has been completed
+- Verifies DEPLOY_KEY format and validity
+- Validates wallet address
+
+Note: For balance checking, use the 'check balance' command instead.
+`;

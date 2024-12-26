@@ -69,3 +69,28 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2024 Patrick Skinner (PSkinnerTech)
+
+## Wallet Management
+
+### Checking Wallet Configuration
+To validate your wallet setup:
+```bash
+npx permalaunch check wallet
+```
+
+This command will:
+- Verify your initialization status
+- Validate your DEPLOY_KEY configuration
+- Check your wallet address format
+
+Example output:
+```
+CHECK WALLET:
+[ x ] Init check passed
+[ x ] Wallet Address: your-wallet-address
+```
+
+Note: For checking wallet balances, use:
+```bash
+npx permalaunch check balance
+```

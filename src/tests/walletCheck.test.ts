@@ -5,13 +5,26 @@ import type { ValidationResult } from '../utils/validation.js';
 // Create mock functions first
 const mockValidateInitStatus = jest.fn<() => Promise<ValidationResult>>();
 const mockGetWalletAddress = jest.fn<() => Promise<string>>();
+const mockGetBalances = jest.fn<() => Promise<{ turboBalance: string; arBalance: string }>>();
 
-// Mock the utils module
-jest.mock('../utils/index.js', () => ({
-  validateInitStatus: mockValidateInitStatus,
-  getWalletAddress: mockGetWalletAddress,
+// Mock the modules BEFORE importing the function
+jest.mock('../utils/validation.js', () => ({
+  validateInitStatus: () => mockValidateInitStatus()
+}));
+
+jest.mock('../utils/wallet.js', () => ({
+  getWalletAddress: () => mockGetWalletAddress(),
+  getBalances: () => mockGetBalances()
+}));
+
+jest.mock('../utils/display.js', () => ({
   formatError: (text: string) => text,
   formatSuccess: (text: string) => text,
+  formatWarning: (text: string) => text
+}));
+
+// Mock delay separately
+jest.mock('../utils/index.js', () => ({
   delay: () => Promise.resolve()
 }));
 
@@ -32,16 +45,13 @@ describe('Wallet Check Command - Init Check', () => {
   });
 
   it('should fail if init has not been run', async () => {
-    // Setup
     mockValidateInitStatus.mockResolvedValue({
       isValid: false,
       message: 'Init incomplete - DEPLOY_KEY not found in environment'
     });
 
-    // Execute
     const result = await runWalletCheck();
     
-    // Assert
     expect(result.success).toBe(false);
     expect(result.message).toBe('Init incomplete - DEPLOY_KEY not found in environment');
   });
@@ -54,10 +64,8 @@ describe('Wallet Check Command - Init Check', () => {
     // Setup failed wallet validation
     mockGetWalletAddress.mockRejectedValue(new Error('Invalid wallet format'));
 
-    // Execute
     const result = await runWalletCheck();
     
-    // Assert
     expect(result.success).toBe(false);
     expect(result.message).toBe('Failed to validate wallet address');
   });
