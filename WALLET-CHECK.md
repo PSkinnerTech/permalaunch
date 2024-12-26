@@ -40,5 +40,4 @@ The wallet check command overlaps with init in several areas:
 - [ ] Update command help text
 - [ ] Add examples to README
 - [ ] Update error message documentation
-- [ ] Document relationship with init command
-- [ ] 
+- [ ] Document relationship with init command 
