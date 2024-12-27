@@ -23,6 +23,33 @@
   - Solution: Check your network connection and try again
   - Note: If the issue persists, please report it as a bug
 
+## Balance Check Command Errors
+
+### Initialization Errors
+- `DEPLOY_KEY environment variable not found`
+  - Occurs when: No DEPLOY_KEY is configured in the environment
+  - Solution: Run `npx permalaunch --init` to set up your wallet
+
+### Balance Retrieval Errors
+- `Network error during balance check`
+  - Occurs when: Cannot connect to Arweave network
+  - Solution: Check your internet connection and try again
+
+### Cost Estimation Errors
+- `No build folder found for cost estimation`
+  - Occurs when: No valid build folder (dist, build, .next) exists
+  - Solution: Run your build command first
+
+- `Insufficient balance for deployment`
+  - Occurs when: Wallet balance is lower than estimated deployment cost
+  - Solution: Visit https://turbo.ar.io to get WINC tokens
+
+### General Errors
+- `Unknown error during balance check`
+  - Occurs when: An unexpected error occurs
+  - Solution: Check logs and try again
+  - Note: If issue persists, please report it as a bug
+
 ## Related Commands
-- For balance-related errors, see the Balance Check documentation
+- For wallet validation errors, see the Wallet Check documentation
 - For initialization errors, see the Init Command documentation 

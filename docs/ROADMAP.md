@@ -23,8 +23,17 @@
 - [x] Add comprehensive error handling and user feedback (2024-12-24)
 - [x] Support multiple build folder types (dist, build, .next) (2024-12-24)
 - [x] Interactive deployment confirmation (2024-12-24)
+- [x] Balance check command implementation (2024-12-26)
+  - [x] Basic balance verification
+  - [x] Cost estimation
+  - [x] User feedback
+  - [ ] Complete test coverage (moved to Short-term Goals)
 
 ## Short-term Goals
+- [ ] Complete balance check test implementation
+  - [ ] Fix TypeScript mock issues
+  - [ ] Add edge case coverage
+  - [ ] Improve error scenario testing
 - [ ] Add comprehensive test suite
 - [ ] Upload to npm
 - [ ] Add CI/CD pipeline
@@ -44,6 +53,10 @@
 - [ ] Add support for custom deployment hooks
 - [ ] Implement deployment caching
 - [ ] Add support for deployment versioning
+- [ ] Advanced balance monitoring features
+  - [ ] Historical cost tracking
+  - [ ] Automated funding alerts
+  - [ ] Balance threshold notifications
 
 ## To-Do's
 - [ ] ESLint
