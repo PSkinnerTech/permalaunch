@@ -43,54 +43,36 @@ npx permalaunch --quick-launch # Quick deployment without checks
 
 ```bash
 npx permalaunch --check-wallet    # Verify wallet configuration
-npx permalaunch --check-balances  # Check balances
+npx permalaunch --check-balances  # Check balances and estimate costs
 npx permalaunch --check-build     # Validate build folder
 npx permalaunch --check-ant       # Verify ANT configuration
 npx permalaunch --check-git       # Check Git configuration
 ```
 
-## Configuration
+### Balance Check Command
+The balance check command verifies your wallet's financial readiness:
+- Validates wallet configuration
+- Checks WINC and AR balances
+- Estimates deployment costs
+- Provides funding guidance
 
-### Environment Variables
-
-- `DEPLOY_KEY`: Base64 encoded Arweave wallet key (required)
-- `GIT_HASH`: Git commit hash (optional)
+Example output:
+```bash
+CHECK BALANCES:
+[ x ] Turbo Balance: 1000000 WINC
+[ x ] AR Balance: 1.5 AR
+[ x ] Estimated Deployment Cost: 500000 WINC
+```
 
 ## Documentation
 
-For detailed documentation, visit [https://permalaunch.ar.io/docs](https://permalaunch.ar.io/docs)
-
-## Contributing
-
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+For detailed documentation:
+- [Error Messages](docs/ERROR-MESSAGES.md)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Roadmap](docs/ROADMAP.md)
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2024 Patrick Skinner (PSkinnerTech)
-
-## Wallet Management
-
-### Checking Wallet Configuration
-To validate your wallet setup:
-```bash
-npx permalaunch check wallet
-```
-
-This command will:
-- Verify your initialization status
-- Validate your DEPLOY_KEY configuration
-- Check your wallet address format
-
-Example output:
-```
-CHECK WALLET:
-[ x ] Init check passed
-[ x ] Wallet Address: your-wallet-address
-```
-
-Note: For checking wallet balances, use:
-```bash
-npx permalaunch check balance
-```

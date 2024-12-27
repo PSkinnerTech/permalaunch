@@ -4,7 +4,52 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.0.4] - 2024-12-26
+## [0.0.6] - 2024-12-26
+### Added
+- Balance check command implementation
+  - Basic balance verification
+  - Cost estimation functionality
+  - User funding guidance
+  - Integration with wallet validation
+- Enhanced error handling for balance checks
+- Comprehensive error documentation
+- Updated roadmap with balance features
+
+### Changed
+- Separated balance checking from wallet validation
+- Updated documentation structure
+- Improved command help text
+- Enhanced user feedback for funding requirements
+
+### Documentation
+- Added balance check error messages to ERROR-MESSAGES.md
+- Updated ROADMAP.md with test coverage goals
+- Enhanced README with balance check examples
+- Created BALANCES-CHECK.md for implementation tracking
+
+### Known Issues
+- Incomplete test coverage for balance check command
+- TypeScript issues with mock implementations
+- Edge case testing needs improvement
+
+## [0.0.5] - 2024-12-26
+### Added
+- Comprehensive test suite for wallet check command
+- Enhanced documentation structure and organization
+- Clear separation between wallet and balance checks
+
+### Changed
+- Moved documentation files to /docs folder
+- Refactored wallet check to focus on core validation
+- Separated balance checking into its own command
+
+### Documentation
+- Added ERROR-MESSAGES.md for centralized error documentation
+- Created COMMAND-RELATIONSHIPS.md for architecture clarity
+- Updated WALLET-CHECK.md with completed items
+- Added BALANCES-CHECK.md for upcoming implementation
+
+## [0.0.4] - 2024-12-25
 ### Added
 - New `--init` command for automated wallet setup
 - Secure .env file handling with proper permissions
