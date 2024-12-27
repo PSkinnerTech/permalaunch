@@ -43,7 +43,7 @@
   - [ ] Other API keys
 - [ ] Dependency scanning
   - [ ] npm audit
-  - [ ] Dependabot setup
+  - [x] Dependabot setup ✨
 - [ ] Code scanning
   - [ ] CodeQL analysis
   - [ ] Security best practices
