@@ -14,12 +14,12 @@ The balance check command needs to:
 4. Follow established architecture patterns
 
 ## Implementation Checklist
-- [ ] Create balance check command structure
-  - [ ] Use shared validation utilities
+- [x] Create balance check command structure
+  - [x] Use shared validation utilities
   - [ ] Implement balance retrieval
   - [ ] Add cost estimation
 - [ ] Update command flow:
-  - [ ] Verify initialization status
+  - [x] Verify initialization status
   - [ ] Get WINC balance
   - [ ] Get AR balance
   - [ ] Calculate deployment costs
@@ -31,9 +31,9 @@ The balance check command needs to:
   - [ ] Funding guidance
 
 ## Testing Plan
-- [ ] Test initialization check
+- [x] Test initialization check
+  - [x] Without proper initialization
   - [ ] With valid setup
-  - [ ] Without proper initialization
 - [ ] Test balance retrieval
   - [ ] Valid balances
   - [ ] Zero balances
@@ -44,6 +44,7 @@ The balance check command needs to:
   - [ ] Edge cases
 
 ## Security Considerations
+- [x] Secure validation handling
 - [ ] Secure balance data handling
 - [ ] Safe cost calculations
 - [ ] Protected API interactions
