@@ -19,7 +19,7 @@
 		"watch": "tsc -w",
 		"link": "npm link",
 		"test": "NODE_OPTIONS=--experimental-vm-modules jest src/**/*.test.ts",
-		"type-check": "tsc --noEmit"
+ 		"type-check": "tsc --noEmit"
 	},
 	"bin": {
 		"permalaunch": "./dist/index.js"
