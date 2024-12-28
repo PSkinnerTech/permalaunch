@@ -45,7 +45,7 @@
   - [ ] npm audit
   - [x] Dependabot setup ✨
 - [ ] Code scanning
-  - [ ] CodeQL analysis
+  - [x] CodeQL analysis ✨
   - [ ] Security best practices
 
 ## Documentation
