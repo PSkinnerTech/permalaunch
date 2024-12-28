@@ -46,6 +46,19 @@ jobs:
           echo "Version and changelog checks passed: $PACKAGE_VERSION"
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
       
+      - name: Generate Release Notes
+        id: notes
+        run: |
+          VERSION=${{ steps.check.outputs.version }}
+          # Extract current version's changelog section
+          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' > RELEASE_NOTES.md
+      
+      - name: Update Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: RELEASE_NOTES.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
       - name: Run tests
         run: npm test
       

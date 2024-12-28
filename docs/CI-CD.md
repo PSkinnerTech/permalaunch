@@ -32,12 +32,12 @@
 - [x] Automated npm publishing ✨
   - [x] Version check ✨
   - [x] Changelog verification ✨
-  - [ ] npm authentication
+  - [x] npm authentication ✨
   - [x] Publishing configuration ✨
 - [ ] Release creation
-  - [ ] GitHub release notes
+  - [x] GitHub release notes ✨
   - [ ] Asset attachment
-  - [ ] Tag management
+  - [x] Tag management ✨
 
 ## Security
 - [x] Secret management ✨
