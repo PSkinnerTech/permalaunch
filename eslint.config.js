@@ -20,10 +20,32 @@ export default [
       '@typescript-eslint': tsPlugin
     },
     rules: {
-      '@typescript-eslint/explicit-function-return-type': 'warn',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': 'error',
-      'no-console': ['warn', { allow: ['warn', 'error'] }]
+      // Allow console for CLI tool
+      'no-console': 'off',
+
+      // TypeScript rules
+      '@typescript-eslint/explicit-function-return-type': ['warn', {
+        allowExpressions: true,
+        allowTypedFunctionExpressions: true,
+        allowHigherOrderFunctions: true,
+        allowDirectConstAssertionInArrowFunctions: true,
+        allowConciseArrowFunctionExpressionsStartingWithVoid: true
+      }],
+      '@typescript-eslint/no-explicit-any': ['error', {
+        ignoreRestArgs: true
+      }],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }]
+    }
+  },
+  {
+    files: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off'
     }
   },
   {
