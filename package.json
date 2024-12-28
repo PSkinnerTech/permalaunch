@@ -18,7 +18,7 @@
 		"build": "tsc",
 		"watch": "tsc -w",
 		"link": "npm link",
-		"test": "NODE_OPTIONS=--experimental-vm-modules jest src/tests/init.test.ts",
+		"test": "NODE_OPTIONS=--experimental-vm-modules jest src/tests/init.test.ts --config=jest.config.ts",
 		"type-check": "tsc --noEmit"
 	},
 	"bin": {
