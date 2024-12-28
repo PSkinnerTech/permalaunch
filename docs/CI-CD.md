@@ -42,7 +42,7 @@
   - [ ] npm token
   - [ ] Other API keys
 - [ ] Dependency scanning
-  - [ ] npm audit
+  - [x] npm audit ✨
   - [x] Dependabot setup ✨
 - [ ] Code scanning
   - [x] CodeQL analysis ✨
