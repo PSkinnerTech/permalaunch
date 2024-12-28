@@ -17,6 +17,6 @@ const config: JestConfigWithTsJest = {
   clearMocks: true,
   resetMocks: false,
   restoreMocks: false
-};
+} as JestConfigWithTsJest;
 
-export default config;
+module.exports = config;
