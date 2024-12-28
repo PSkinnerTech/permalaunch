@@ -52,6 +52,12 @@ jobs:
       - name: Build
         run: npm run build
       
+      - name: Check Bundle Size
+        run: npx bundlesize
+        env:
+          CI: true
+          BUNDLESIZE_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
       - name: Generate Release Notes
         id: notes
         run: |
