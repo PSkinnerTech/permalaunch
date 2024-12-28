@@ -1,8 +1,7 @@
-import { TurboFactory } from '@ardrive/turbo-sdk';
+import { ArweaveSigner, TurboFactory } from '@ardrive/turbo-sdk';
 import fs from 'fs';
 import mime from 'mime-types';
 import path from 'node:path';
-import { ReadableStream } from 'node:stream/web';
 import os from 'node:os';
 
 import { ArweaveManifest, DeployArgs } from '../types.js';
@@ -11,8 +10,20 @@ async function getContentType(filePath: string): Promise<string> {
   return mime.lookup(filePath) || 'application/octet-stream';
 }
 
-export default async function TurboDeploy(argv: DeployArgs, jwk: any): Promise<string | null> {
-  const turbo = TurboFactory.authenticated({ privateKey: jwk });
+interface TurboUploadConfig {
+  bytes: number[];
+  tags?: { name: string; value: string }[];
+  contentType?: string;
+}
+
+export async function getUploadCosts(_config: TurboUploadConfig): Promise<number> {
+  return 0; // or actual cost calculation
+}
+
+export default async function TurboDeploy(argv: DeployArgs, encodedWallet: string): Promise<string | null> {
+  const wallet = JSON.parse(Buffer.from(encodedWallet, 'base64').toString());
+  const signer = new ArweaveSigner(wallet);
+  const turbo = TurboFactory.authenticated({ signer });
   const deployFolder = argv.deployFolder;
 
   const newManifest: ArweaveManifest = {

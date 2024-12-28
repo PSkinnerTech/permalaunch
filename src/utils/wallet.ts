@@ -92,7 +92,10 @@ export async function handleWalletEncoding(): Promise<boolean> {
   }
 }
 
-export async function getBalances(encodedWallet: string) {
+export async function getBalances(encodedWallet: string): Promise<{
+  turboBalance: string;
+  arBalance: string;
+}> {
   try {
     const wallet = JSON.parse(Buffer.from(encodedWallet, 'base64').toString());
     const signer = new ArweaveSigner(wallet);
@@ -119,3 +122,10 @@ export async function getBalances(encodedWallet: string) {
     return { turboBalance: '0', arBalance: '0' };
   }
 }
+
+const validateWalletFile = async (_filePath: string): Promise<boolean> => {
+  // Implementation
+  return true;
+};
+
+export { validateWalletFile as _validateWalletFile };

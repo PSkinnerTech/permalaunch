@@ -44,7 +44,6 @@ export async function quickLaunch(argv: DeployArgs): Promise<void> {
           manifestItems.push(...await processDirectory(fullPath, baseDir));
         } else {
           const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
-          const fileContent = fs.readFileSync(fullPath);
           const contentType = mime.lookup(fullPath) || 'application/octet-stream';
           
           console.log(`Uploading file: ${relativePath}`);

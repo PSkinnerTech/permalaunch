@@ -1,9 +1,7 @@
 import { 
   formatSuccess, 
   formatError,
-  formatWarning,
   formatHighlight,
-  delay,
   updateAntRecord,
   getGitTags,
   checkBuildFolder
