@@ -21,8 +21,8 @@
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js src/tests/init.test.ts --config=jest.config.mjs",
 		"type-check": "tsc --noEmit",
 		"check-size": "bundlesize",
-		"lint": "eslint . --ext .ts",
-		"lint:fix": "eslint . --ext .ts --fix"
+		"lint": "eslint \"src/**/*.ts\"",
+		"lint:fix": "eslint \"src/**/*.ts\" --fix"
 	},
 	"bin": {
 		"permalaunch": "./dist/index.js"

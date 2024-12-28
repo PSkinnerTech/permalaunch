@@ -54,7 +54,7 @@
 ## Documentation
 - [x] Contributing guidelines update
   - [x] PR template ✨
-  - [ ] Issue templates
+  - [x] Issue templates ✨
   - [x] Workflow documentation ✨
 - [x] CI/CD documentation
   - [x] Pipeline description
