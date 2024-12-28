@@ -56,9 +56,9 @@
   - [x] PR template ✨
   - [ ] Issue templates
   - [x] Workflow documentation ✨
-- [x] CI/CD documentation ✨
-  - [x] Pipeline description ✨
-  - [ ] Environment setup
+- [x] CI/CD documentation
+  - [x] Pipeline description
+  - [x] Environment setup ✨
   - [ ] Troubleshooting guide
 
 ## Quality Gates
