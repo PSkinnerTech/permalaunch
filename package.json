@@ -20,7 +20,9 @@
 		"link": "npm link",
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js src/tests/init.test.ts --config=jest.config.mjs",
 		"type-check": "tsc --noEmit",
-		"check-size": "bundlesize"
+		"check-size": "bundlesize",
+		"lint": "eslint . --ext .ts",
+		"lint:fix": "eslint . --ext .ts --fix"
 	},
 	"bin": {
 		"permalaunch": "./dist/index.js"
@@ -58,7 +60,8 @@
 		"@typescript-eslint/eslint-plugin": "^7.18.0",
 		"@typescript-eslint/parser": "^7.18.0",
 		"bundlesize": "^0.18.2",
-		"eslint": "^9.0.0",
+		"eslint": "^9.17.0",
+		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-simple-import-sort": "^10.0.0",
 		"fs-extra": "^11.2.0",

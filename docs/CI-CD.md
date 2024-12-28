@@ -14,7 +14,7 @@
   - [x] Check test coverage
   - [x] TypeScript compilation check
   - [x] ESM support configured ✨
-  - [ ] Lint checks (when implemented)
+  - [x] Lint checks (when implemented) ✨
 - [x] Status checks requirements
   - [x] All tests must pass
   - [x] No TypeScript errors
