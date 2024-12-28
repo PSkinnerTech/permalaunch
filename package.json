@@ -21,7 +21,7 @@
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js src/tests/init.test.ts --config=jest.config.mjs",
 		"type-check": "tsc --noEmit",
 		"check-size": "bundlesize",
-		"lint": "eslint \"src/**/*.ts\" --max-warnings 50",
+		"lint": "eslint \"src/**/*.ts\" --max-warnings 0 --fix",
 		"lint:fix": "eslint \"src/**/*.ts\" --fix"
 	},
 	"bin": {
