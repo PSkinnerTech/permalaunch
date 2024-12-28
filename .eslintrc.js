@@ -1,32 +1,47 @@
 module.exports = {
+	root: true,
 	parser: '@typescript-eslint/parser',
-	plugins: ['@typescript-eslint', 'import', 'simple-import-sort'],
+	plugins: ['@typescript-eslint'],
 	extends: [
-	  'eslint:recommended',
-	  'plugin:@typescript-eslint/recommended',
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended'
 	],
 	rules: {
-	  'import/no-duplicates': 'error',
-	  'simple-import-sort/imports': 'error',
-	  'simple-import-sort/exports': 'error'
+		// Allow console statements in our CLI tool
+		'no-console': 'off',
+		
+		// Enforce return types except for test files
+		'@typescript-eslint/explicit-function-return-type': ['error', {
+			allowExpressions: true,
+			allowTypedFunctionExpressions: true,
+			allowHigherOrderFunctions: true,
+			allowDirectConstAssertionInArrowFunctions: true,
+			allowConciseArrowFunctionExpressionsStartingWithVoid: true,
+			allowedNames: ['test', 'it', 'describe', 'beforeEach', 'afterEach', 'beforeAll', 'afterAll']
+		}],
+
+		// Be explicit about unused vars
+		'@typescript-eslint/no-unused-vars': ['error', {
+			argsIgnorePattern: '^_',
+			varsIgnorePattern: '^_',
+			caughtErrorsIgnorePattern: '^_'
+		}],
+
+		// Allow any in specific cases
+		'@typescript-eslint/no-explicit-any': ['error', {
+			ignoreRestArgs: true,
+			fixToUnknown: false
+		}]
 	},
 	overrides: [
-	  {
-		files: ['*.ts'],
-		rules: {
-		  'simple-import-sort/imports': [
-			'error',
-			{
-			  groups: [
-				['^react', '^@?\\w'],
-				['^arweave', '@irys/sdk', '@permaweb/aoconnect', '^@?\\w'],
-				['^\\u0000'],
-				['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-				['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-			  ],
-			},
-		  ],
-		},
-	  },
-	],
-  };
+		{
+			// Relax rules for test files
+			files: ['**/*.test.ts'],
+			rules: {
+				'@typescript-eslint/no-explicit-any': 'off',
+				'@typescript-eslint/no-unused-vars': 'off',
+				'@typescript-eslint/explicit-function-return-type': 'off'
+			}
+		}
+	]
+};
