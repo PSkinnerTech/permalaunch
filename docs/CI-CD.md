@@ -6,7 +6,7 @@
   - [x] Node.js environment configuration
   - [x] Cache configuration for dependencies
   - [x] Matrix testing for different Node versions
-  - [ ] OS compatibility testing
+  - [x] OS compatibility testing ✨
 
 ## Testing Pipeline
 - [x] Automated testing on pull requests
