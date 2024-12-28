@@ -30,6 +30,10 @@
   - [ ] Complete test coverage (moved to Short-term Goals)
 
 ## Short-term Goals
+- [ ] Complete security test implementation
+  - [ ] Fix Jest mock type issues
+  - [ ] Add proper fs mocking setup
+  - [ ] Complete test coverage for security utils
 - [ ] Complete balance check test implementation
   - [ ] Fix TypeScript mock issues
   - [ ] Add edge case coverage
