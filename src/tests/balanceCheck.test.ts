@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 import { runBalanceCheck } from '../commands/checks/balanceCheck.js';
 
 interface Balances {

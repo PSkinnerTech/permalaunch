@@ -1,4 +1,13 @@
 import { jest } from '@jest/globals';
-import { validateInitStatus } from './src/utils/validation';
 
+// Set longer timeout for integration tests
 jest.setTimeout(30000); // 30 seconds
+
+// Add proper mock cleanup
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
