@@ -46,6 +46,12 @@ jobs:
           echo "Version and changelog checks passed: $PACKAGE_VERSION"
           echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
       
+      - name: Run tests
+        run: npm test
+      
+      - name: Build
+        run: npm run build
+      
       - name: Generate Release Notes
         id: notes
         run: |
@@ -53,17 +59,20 @@ jobs:
           # Extract current version's changelog section
           sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' > RELEASE_NOTES.md
       
+      - name: Create Release Assets
+        run: |
+          tar -czf permalaunch-${{ steps.check.outputs.version }}.tar.gz dist/
+          zip -r permalaunch-${{ steps.check.outputs.version }}.zip dist/
+      
       - name: Update Release
         uses: softprops/action-gh-release@v1
         with:
           body_path: RELEASE_NOTES.md
+          files: |
+            permalaunch-${{ steps.check.outputs.version }}.tar.gz
+            permalaunch-${{ steps.check.outputs.version }}.zip
+            dist/**
           token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Run tests
-        run: npm test
-      
-      - name: Build
-        run: npm run build
       
       - name: Publish to npm
         run: npm publish

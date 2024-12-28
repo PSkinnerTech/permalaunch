@@ -26,7 +26,7 @@
   - [x] TypeScript compilation
   - [x] Bundle creation
   - [ ] Package size check
-  - [ ] Build artifacts handling
+  - [x] Build artifacts handling ✨
 
 ## Deployment Pipeline
 - [x] Automated npm publishing ✨
@@ -34,9 +34,9 @@
   - [x] Changelog verification ✨
   - [x] npm authentication ✨
   - [x] Publishing configuration ✨
-- [ ] Release creation
+- [x] Release creation
   - [x] GitHub release notes ✨
-  - [ ] Asset attachment
+  - [x] Asset attachment ✨
   - [x] Tag management ✨
 
 ## Security
