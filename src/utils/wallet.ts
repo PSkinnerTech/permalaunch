@@ -66,7 +66,7 @@ export async function getWalletAddress(encodedWallet?: string): Promise<string> 
   }
 }
 
-export async function handleWalletEncoding(): Promise<boolean> {
+export const handleWalletEncoding = async (): Promise<boolean> => {
   const proceed = await inquirer.prompt([{
     type: 'confirm',
     name: 'proceed',
@@ -107,7 +107,9 @@ export async function handleWalletEncoding(): Promise<boolean> {
   }
 }
 
-export async function getBalances(encodedWallet?: string) {
+export async function getBalances(
+  encodedWallet?: string
+): Promise<{ turboBalance: string; arBalance: string }> {
   try {
     const deployKey = encodedWallet || process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
     if (!deployKey) throw new Error('No wallet key found');
@@ -130,7 +132,7 @@ export async function getBalances(encodedWallet?: string) {
     
     return {
       turboBalance: balance.winc.toString(),
-      arBalance: arweave.ar.winstonToAr(arBalance)
+      arBalance: arweave.ar.winstonToAr(arBalance),
     };
   } catch (error) {
     console.error(formatError('Error getting balances:'), error);
