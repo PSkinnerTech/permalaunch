@@ -20,7 +20,10 @@ export async function runBalanceCheck(): Promise<CheckResult> {
   console.log('\n\x1b[35mCHECK BALANCES:\x1b[0m');
 
   try {
-    if (!process.env.DEPLOY_KEY) {
+    // Check for wallet key in environment (same pattern as walletCheck)
+    const deployKey = process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
+    
+    if (!deployKey) {
       console.log(formatError('[   ] No DEPLOY_KEY configured'));
       return {
         success: false,
@@ -28,8 +31,8 @@ export async function runBalanceCheck(): Promise<CheckResult> {
       };
     }
 
-    // Get wallet balances
-    const { turboBalance, arBalance } = await getBalances(process.env.DEPLOY_KEY);
+    // Get wallet balances using the found key
+    const { turboBalance, arBalance } = await getBalances(deployKey);
     
     console.log(formatSuccess(`[ x ] Turbo Balance: ${turboBalance} WINC`));
     console.log(formatSuccess(`[ x ] AR Balance: ${arBalance} AR`));

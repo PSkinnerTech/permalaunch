@@ -22,12 +22,9 @@ export function checkWalletEncoded(): boolean {
       console.log('Available environment variables:', Object.keys(process.env));
       return false;
     }
-    
-    console.log('Wallet key found, attempting to decode...');
     // Try to decode and parse the wallet to verify it's valid
     const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
-    console.log('Successfully decoded and validated wallet key');
     return true;
   } catch (e) {
     console.log('Error validating wallet key:', e);
