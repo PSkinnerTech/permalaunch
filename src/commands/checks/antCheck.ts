@@ -50,8 +50,7 @@ export async function runAntCheck(antProcess?: string, undername: string = '@'):
     }
 
     // Validate ANT configuration
-    const wallet = JSON.parse(Buffer.from(process.env.DEPLOY_KEY, 'base64').toString());
-    const isValid = await validateAntConfig(antProcess, undername, wallet);
+    const isValid = await validateAntConfig(antProcess, undername);
     
     if (!isValid) {
       console.log(formatError('[   ] ANT validation failed'));

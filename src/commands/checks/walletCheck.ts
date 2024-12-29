@@ -1,13 +1,25 @@
+#!/usr/bin/env node
+
+import { config } from 'dotenv';
+import { resolve } from 'path';
 import { 
-  validateInitStatus,
+  checkWalletExists,
+  checkWalletEncoded,
   getWalletAddress,
-  getBalances,
   formatSuccess,
   formatError,
-  formatWarning,
   delay
 } from '../../utils/index.js';
 import { CheckResult } from './index.js';
+
+// Load environment variables from .env file
+const envPath = resolve(process.cwd(), '.env');
+const result = config({ path: envPath });
+console.log('.env file loaded:', result.parsed ? 'success' : 'failed');
+
+if (!result.parsed) {
+  console.log('Failed to load .env file. Please ensure it exists and is readable.');
+}
 
 export async function runWalletCheck(): Promise<CheckResult> {
   process.stdout.write('\n\x1b[33mCHECKING WALLET...\x1b[0m');
@@ -20,16 +32,25 @@ export async function runWalletCheck(): Promise<CheckResult> {
   console.log('\n\x1b[35mCHECK WALLET:\x1b[0m');
   
   try {
-    // Check if init has been run
-    const initStatus = await validateInitStatus();
-    if (!initStatus.isValid) {
-      console.log(formatError(`[   ] Init check failed: ${initStatus.message}`));
+    // Check if wallet.json exists
+    if (!checkWalletExists()) {
+      console.log(formatError('[   ] wallet.json not found'));
       return { 
         success: false, 
-        message: initStatus.message 
+        message: 'wallet.json not found' 
       };
     }
-    console.log(formatSuccess('[ x ] Init check passed'));
+    console.log(formatSuccess('[ x ] wallet.json found'));
+
+    // Check if wallet is encoded in environment
+    if (!checkWalletEncoded()) {
+      console.log(formatError('[   ] DEPLOY_KEY not found or invalid in environment'));
+      return {
+        success: false,
+        message: 'DEPLOY_KEY not found or invalid in environment'
+      };
+    }
+    console.log(formatSuccess('[ x ] Wallet encoded properly'));
 
     // Get and validate wallet address
     try {
@@ -41,15 +62,6 @@ export async function runWalletCheck(): Promise<CheckResult> {
         success: false,
         message: 'Failed to validate wallet address'
       };
-    }
-
-    // Add balance check
-    const { turboBalance, arBalance } = await getBalances(process.env.DEPLOY_KEY!);
-    console.log(formatSuccess(`[ x ] WINC Balance: ${turboBalance}`));
-    console.log(formatSuccess(`[ x ] AR Balance: ${arBalance}`));
-
-    if (turboBalance === '0' && arBalance === '0') {
-      console.log(formatWarning('\nWARNING: Wallet has no funds. Visit https://turbo.ar.io to get started.'));
     }
 
     return { 

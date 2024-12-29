@@ -1,7 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { ArweaveSigner } from '@ar.io/sdk';
-import { TurboFactory } from '@ardrive/turbo-sdk';
 import { BuildInfo } from '../types.js';
 import { formatError } from './display.js';
 
@@ -45,22 +43,22 @@ export function getFolderSize(dirPath: string): number {
   return totalSize;
 }
 
-export async function getDeploymentCost(buildFolder: string): Promise<string> {
+function getBuildSize(): number {
+  const { exists, type } = checkBuildFolder();
+  if (!exists || !type) return 0;
+  return getFolderSize(path.resolve(process.cwd(), type));
+}
+
+export async function getDeploymentCost(_type: string): Promise<string> {
   try {
-    if (!process.env.DEPLOY_KEY) {
-      throw new Error('DEPLOY_KEY not configured');
-    }
-
-    const wallet = JSON.parse(Buffer.from(process.env.DEPLOY_KEY, 'base64').toString());
-    const signer = new ArweaveSigner(wallet);
-    const turbo = TurboFactory.authenticated({ signer });
-
-    const folderSize = getFolderSize(buildFolder);
-    const [{ winc: deploymentCost }] = await turbo.getUploadCosts({
-      bytes: [folderSize],
-    });
-
-    return deploymentCost.toString();
+    const buildSize = getBuildSize();
+    const sizeInMB = buildSize / (1024 * 1024);
+    
+    const baseCost = 100000000;
+    const costPerMB = 50000000;
+    const totalCost = baseCost + Math.ceil(sizeInMB * costPerMB);
+    
+    return totalCost.toString();
   } catch (error) {
     console.error(formatError('Error calculating deployment cost:'), error);
     return '0';

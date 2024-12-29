@@ -1,0 +1,86 @@
+name: Publish Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Check version and changelog
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED_VERSION=$(npm view permalaunch version || echo "0.0.0")
+          GIT_TAG=${GITHUB_REF#refs/tags/}
+          
+          # Check versions
+          if [ "$PACKAGE_VERSION" = "$PUBLISHED_VERSION" ]; then
+            echo "Version $PACKAGE_VERSION already exists on npm"
+            exit 1
+          fi
+          
+          if [ "v$PACKAGE_VERSION" != "$GIT_TAG" ]; then
+            echo "Git tag ($GIT_TAG) does not match package.json version (v$PACKAGE_VERSION)"
+            exit 1
+          fi
+          
+          # Check CHANGELOG.md
+          if ! grep -q "## \[$PACKAGE_VERSION\]" CHANGELOG.md; then
+            echo "No changelog entry found for version $PACKAGE_VERSION"
+            exit 1
+          fi
+          
+          echo "Version and changelog checks passed: $PACKAGE_VERSION"
+          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Check Bundle Size
+        run: npx bundlesize
+        env:
+          CI: true
+          BUNDLESIZE_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Generate Release Notes
+        id: notes
+        run: |
+          VERSION=${{ steps.check.outputs.version }}
+          # Extract current version's changelog section
+          sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' > RELEASE_NOTES.md
+      
+      - name: Create Release Assets
+        run: |
+          tar -czf permalaunch-${{ steps.check.outputs.version }}.tar.gz dist/
+          zip -r permalaunch-${{ steps.check.outputs.version }}.zip dist/
+      
+      - name: Update Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: RELEASE_NOTES.md
+          files: |
+            permalaunch-${{ steps.check.outputs.version }}.tar.gz
+            permalaunch-${{ steps.check.outputs.version }}.zip
+            dist/**
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} 

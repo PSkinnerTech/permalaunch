@@ -4,13 +4,32 @@ import fs from 'fs-extra';
 import path from 'path';
 import { initCommand } from '../commands/init.js';
 
+// Move mocks to top level
+const mockExit = jest.spyOn(process, 'exit')
+  .mockImplementation((code?: string | number | null) => undefined as never);
+
 describe('Init Command', () => {
+  // Move common setup to top level
   const WALLET_CONTENT = JSON.stringify({ privateKey: 'test-private-key' }, null, 2);
   const BASE64_KEY = Buffer.from(WALLET_CONTENT, 'utf-8').toString('base64');
   const EXISTING_ENV_CONTENT = 'EXISTING_VAR=some-value\nANOTHER_VAR=another-value\n';
 
+  // Use beforeAll for one-time setup
+  beforeAll(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  // Clean up after each test
   afterEach(() => {
     mockFs.restore();
+    jest.clearAllMocks();
+  });
+
+  // Clean up after all tests
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   describe('with wallet.json', () => {

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { 
   formatSuccess, 
   formatError, 
@@ -34,18 +36,21 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     // Run wallet check
     results.wallet = await runWalletCheck();
     if (!results.wallet.success) {
+      await displaySummary(results);
       return results;
     }
 
     // Run balance check
     results.balance = await runBalanceCheck();
     if (!results.balance.success) {
+      await displaySummary(results);
       return results;
     }
 
     // Run build check
     results.build = await runBuildCheck(argv.deployFolder);
     if (!results.build.success) {
+      await displaySummary(results);
       return results;
     }
 
@@ -95,6 +100,7 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     return results;
   } catch (error) {
     console.error(formatError('\nError during prelaunch checklist:'), error);
+    await displaySummary(results);
     return results;
   }
 }

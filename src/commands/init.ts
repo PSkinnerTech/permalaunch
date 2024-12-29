@@ -1,8 +1,10 @@
+#!/usr/bin/env node
+
 import fs from 'fs-extra';
 import path from 'path';
-import { formatSuccess, formatError, formatWarning } from '../utils/display.js';
+import { formatSuccess, formatWarning } from '../utils/display.js';
 
-const WALLETS_DIR = process.cwd();
+const WALLETS_DIR = process.cwd()
 const ENV_FILE = '.env';
 const GITIGNORE_FILE = '.gitignore';
 
@@ -21,9 +23,7 @@ const findWalletFiles = async (): Promise<string[]> => {
  * @param content - The content of the wallet file.
  * @returns The Base64 encoded string.
  */
-const encodeBase64 = (content: string): string => {
-  return Buffer.from(content, 'utf-8').toString('base64');
-};
+const _encodeBase64 = (data: string): string => Buffer.from(data).toString('base64');
 
 /**
  * Update or create the .env file with the DEPLOY_KEY.
@@ -83,44 +83,44 @@ const checkGitignore = async (walletFile: string): Promise<void> => {
 /**
  * Initialize deployment key setup.
  */
-const init = async (): Promise<void> => {
-  try {
-    const walletFiles = await findWalletFiles();
+// const init = async (): Promise<void> => {
+//   try {
+//     const walletFiles = await findWalletFiles();
 
-    if (walletFiles.length === 0) {
-      console.log(
-        formatWarning(
-          'No Wallet Found. Please add your exported wallet file to the root of the project. Be sure to add the wallet to .gitignore immediately after.'
-        )
-      );
-      return;
-    }
+//     if (walletFiles.length === 0) {
+//       console.log(
+//         formatWarning(
+//           'No Wallet Found. Please add your exported wallet file to the root of the project. Be sure to add the wallet to .gitignore immediately after.'
+//         )
+//       );
+//       return;
+//     }
 
-    if (walletFiles.length > 1) {
-      console.warn(
-        formatWarning(
-          'Multiple wallet files found. Please ensure only one wallet file is present.'
-        )
-      );
-      return;
-    }
+//     if (walletFiles.length > 1) {
+//       console.warn(
+//         formatWarning(
+//           'Multiple wallet files found. Please ensure only one wallet file is present.'
+//         )
+//       );
+//       return;
+//     }
 
-    const walletFile = walletFiles[0];
-    const walletPath = path.join(WALLETS_DIR, walletFile);
-    const walletContent = await fs.readFile(walletPath, 'utf-8');
-    const base64Key = encodeBase64(walletContent);
+//     const walletFile = walletFiles[0];
+//     const walletPath = path.join(WALLETS_DIR, walletFile);
+//     const walletContent = await fs.readFile(walletPath, 'utf-8');
+//     const base64Key = encodeBase64(walletContent);
 
-    await updateEnvFile(base64Key);
-    await checkGitignore(walletFile);
+//     await updateEnvFile(base64Key);
+//     await checkGitignore(walletFile);
 
-    console.log(formatSuccess('DEPLOY_KEY has been set successfully in .env file.'));
-  } catch (error) {
-    console.error(
-      formatError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    );
-    process.exit(1);
-  }
-};
+//     console.log(formatSuccess('DEPLOY_KEY has been set successfully in .env file.'));
+//   } catch (error) {
+//     console.error(
+//       formatError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+//     );
+//     process.exit(1);
+//   }
+// };
 
 /**
  * Exported handler for the init command.

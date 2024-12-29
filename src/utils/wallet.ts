@@ -13,14 +13,21 @@ export function checkWalletExists(): boolean {
 
 export function checkWalletEncoded(): boolean {
   try {
-    const DEPLOY_KEY = process.env.DEPLOY_KEY;
-    if (!DEPLOY_KEY) return false;
     
+    // Check for either DEPLOY_KEY or DEPLOY_KEY64
+    const deployKey = process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
+    
+    if (!deployKey) {
+      console.log('Neither DEPLOY_KEY nor DEPLOY_KEY64 found in environment variables');
+      console.log('Available environment variables:', Object.keys(process.env));
+      return false;
+    }
     // Try to decode and parse the wallet to verify it's valid
-    const decoded = Buffer.from(DEPLOY_KEY, 'base64').toString('utf-8');
+    const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
     return true;
   } catch (e) {
+    console.log('Error validating wallet key:', e);
     return false;
   }
 }
@@ -39,9 +46,12 @@ export function checkWalletInGitignore(): boolean {
   }
 }
 
-export async function getWalletAddress(encodedWallet: string): Promise<string> {
+export async function getWalletAddress(encodedWallet?: string): Promise<string> {
   try {
-    const wallet = JSON.parse(Buffer.from(encodedWallet, 'base64').toString());
+    const deployKey = encodedWallet || process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
+    if (!deployKey) throw new Error('No wallet key found');
+    
+    const wallet = JSON.parse(Buffer.from(deployKey, 'base64').toString());
     const signer = new ArweaveSigner(wallet);
     const turbo = TurboFactory.authenticated({ signer });
     return await turbo.signer.getNativeAddress();
@@ -51,7 +61,7 @@ export async function getWalletAddress(encodedWallet: string): Promise<string> {
   }
 }
 
-export async function handleWalletEncoding(): Promise<boolean> {
+export const handleWalletEncoding = async (): Promise<boolean> => {
   const proceed = await inquirer.prompt([{
     type: 'confirm',
     name: 'proceed',
@@ -92,9 +102,14 @@ export async function handleWalletEncoding(): Promise<boolean> {
   }
 }
 
-export async function getBalances(encodedWallet: string) {
+export async function getBalances(
+  encodedWallet?: string
+): Promise<{ turboBalance: string; arBalance: string }> {
   try {
-    const wallet = JSON.parse(Buffer.from(encodedWallet, 'base64').toString());
+    const deployKey = encodedWallet || process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
+    if (!deployKey) throw new Error('No wallet key found');
+    
+    const wallet = JSON.parse(Buffer.from(deployKey, 'base64').toString());
     const signer = new ArweaveSigner(wallet);
     const turbo = TurboFactory.authenticated({ signer });
     
@@ -112,10 +127,17 @@ export async function getBalances(encodedWallet: string) {
     
     return {
       turboBalance: balance.winc.toString(),
-      arBalance: arweave.ar.winstonToAr(arBalance)
+      arBalance: arweave.ar.winstonToAr(arBalance),
     };
   } catch (error) {
     console.error(formatError('Error getting balances:'), error);
     return { turboBalance: '0', arBalance: '0' };
   }
 }
+
+const validateWalletFile = async (_filePath: string): Promise<boolean> => {
+  // Implementation
+  return true;
+};
+
+export { validateWalletFile as _validateWalletFile };

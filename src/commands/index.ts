@@ -5,7 +5,6 @@ import { runBuildCheck } from './checks/buildCheck.js';
 import { runAntCheck } from './checks/antCheck.js';
 import { runGitCheck } from './checks/gitCheck.js';
 import { launch } from './launch.js';
-import { quickLaunch } from './quickLaunch.js';
 import { DeployArgs } from '../types.js';
 import { initCommand } from './init.js';
 

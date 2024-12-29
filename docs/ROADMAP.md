@@ -30,10 +30,22 @@
   - [ ] Complete test coverage (moved to Short-term Goals)
 
 ## Short-term Goals
+- [ ] Complete security test implementation
+  - [ ] Fix Jest mock type issues
+  - [ ] Add proper fs mocking setup
+  - [ ] Complete test coverage for security utils
 - [ ] Complete balance check test implementation
   - [ ] Fix TypeScript mock issues
   - [ ] Add edge case coverage
   - [ ] Improve error scenario testing
+- [ ] Add automated code quality checks
+  - [ ] ESLint configuration
+  - [ ] Prettier setup
+  - [ ] Breaking change detection
+- [ ] Implement security best practices
+  - [ ] API key management
+  - [ ] Wallet operation patterns
+  - [ ] ANT security guidelines
 - [ ] Add comprehensive test suite
 - [ ] Upload to npm
 - [ ] Add CI/CD pipeline
@@ -57,6 +69,14 @@
   - [ ] Historical cost tracking
   - [ ] Automated funding alerts
   - [ ] Balance threshold notifications
+- [ ] Advanced code quality tooling
+  - [ ] Custom ESLint rules for wallet operations
+  - [ ] Automated breaking change detection
+  - [ ] Code style automation
+- [ ] Enhanced security features
+  - [ ] Advanced API key rotation
+  - [ ] Wallet operation monitoring
+  - [ ] Permission management system
 
 ## To-Do's
 - [ ] ESLint

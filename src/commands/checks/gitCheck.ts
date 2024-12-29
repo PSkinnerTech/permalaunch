@@ -2,7 +2,6 @@ import {
   checkGitHash,
   checkGithubWorkflow,
   displayGitStatus,
-  formatSuccess, 
   formatError,
   delay
 } from '../../utils/index.js';
@@ -20,7 +19,7 @@ export async function runGitCheck(): Promise<CheckResult> {
 
   try {
     // Check Git hash
-    const { exists: hashExists, hash } = checkGitHash();
+    const { exists: hashExists } = checkGitHash();
     
     // Check GitHub workflow
     const workflowExists = checkGithubWorkflow();
