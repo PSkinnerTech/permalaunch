@@ -15,7 +15,7 @@
 		"deployment-tool-for-permaweb, arns, ar.io, Patrick Skinner"
 	],
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc && chmod +x ./dist/index.js",
 		"watch": "tsc -w",
 		"link": "npm link",
 		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js src/tests/init.test.ts --config=jest.config.mjs",
@@ -31,6 +31,7 @@
 		"@ar.io/sdk": "^3.0.0",
 		"@ardrive/turbo-sdk": "^1.10.1",
 		"@kyvejs/sdk": "latest",
+		"dotenv": "^16.4.7",
 		"inquirer": "^12.2.0",
 		"mime-types": "^2.1.35",
 		"stream": "^0.0.3",

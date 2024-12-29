@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import fs from 'fs-extra';
 import path from 'path';
 import { formatSuccess, formatWarning } from '../utils/display.js';
