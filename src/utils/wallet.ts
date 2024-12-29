@@ -13,8 +13,6 @@ export function checkWalletExists(): boolean {
 
 export function checkWalletEncoded(): boolean {
   try {
-    console.log('Current working directory:', process.cwd());
-    console.log('Checking for wallet key in environment...');
     
     // Check for either DEPLOY_KEY or DEPLOY_KEY64
     const deployKey = process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
