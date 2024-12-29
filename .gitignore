@@ -12,5 +12,3 @@ node_modules
 /dist
 /build
 /.next
-original-script.ts
-/src/originals
