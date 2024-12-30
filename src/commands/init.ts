@@ -49,9 +49,9 @@ const handleEnvFile = async (base64Key: string): Promise<void> => {
     
     try {
       fs.writeFileSync(envPath, '', { mode: 0o600 });
-    } catch (error) {
-      console.error(formatError('Error creating .env file:'), error);
-      throw error;
+    } catch {
+      console.error(formatError('Error creating .env file'));
+      throw new Error('Failed to create .env file');
     }
   }
 

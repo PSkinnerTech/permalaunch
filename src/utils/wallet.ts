@@ -23,7 +23,7 @@ export function checkWalletEncoded(): boolean {
     const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
     return true;
-  } catch (_e) {
+  } catch {
     console.log('Error validating wallet key');
     return false;
   }
@@ -38,7 +38,7 @@ export function checkWalletInGitignore(): boolean {
     return gitignoreContent.split('\n').some(line => 
       line.trim() === 'wallet.json' || line.trim() === '/wallet.json'
     );
-  } catch (e) {
+  } catch {
     return false;
   }
 }

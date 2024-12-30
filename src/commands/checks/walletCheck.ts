@@ -56,7 +56,7 @@ export async function runWalletCheck(): Promise<CheckResult> {
     try {
       const address = await getWalletAddress(process.env.DEPLOY_KEY!);
       console.log(formatSuccess(`[ x ] Wallet Address: ${address}`));
-    } catch (error) {
+    } catch {
       console.log(formatError('[   ] Invalid wallet address'));
       return {
         success: false,
