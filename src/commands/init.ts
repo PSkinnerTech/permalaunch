@@ -80,6 +80,16 @@ const handleEnvFile = async (base64Key: string): Promise<void> => {
       }
       return;
     }
+
+    // If updating, encode and update without asking
+    const deployKeyLine = `DEPLOY_KEY="${base64Key}"`;
+    const lines = envContent.split('\n').filter((line) => !line.startsWith('DEPLOY_KEY='));
+    lines.push(deployKeyLine);
+    const newEnvContent = lines.join('\n') + '\n';
+
+    await fs.writeFile(envPath, newEnvContent, { mode: 0o600 });
+    console.log(formatSuccess('Your wallet has been encoded and stored in your .env file as DEPLOY_KEY.'));
+    return;
   }
 
   const { confirmEncode } = await inquirer.prompt([{
