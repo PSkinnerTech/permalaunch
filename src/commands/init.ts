@@ -47,8 +47,12 @@ const handleEnvFile = async (base64Key: string): Promise<void> => {
       throw new Error('Cannot proceed without .env file');
     }
     
-    await fs.writeFile(envPath, '', { mode: 0o600 });
-    envExists = true;
+    try {
+      fs.writeFileSync(envPath, '', { mode: 0o600 });
+    } catch {
+      console.error(formatError('Error creating .env file'));
+      throw new Error('Failed to create .env file');
+    }
   }
 
   let envContent = await fs.readFile(envPath, 'utf-8');
@@ -133,7 +137,7 @@ export const initCommand = {
         if (!parsed.kty || !parsed.n || !parsed.e) {
           throw new Error('Invalid wallet format - not a valid JWK');
         }
-      } catch (error) {
+      } catch {
         console.error(formatError('Invalid wallet file format'));
         return;
       }
@@ -141,8 +145,9 @@ export const initCommand = {
       const base64Key = await encodeWalletToBase64(walletPath);
       await handleEnvFile(base64Key);
 
-    } catch (error) {
-      console.error(formatError(`Initialization failed: ${(error as Error).message}`));
+    } catch (error: unknown) {
+      console.error(formatError('Error during initialization:'), error instanceof Error ? error.message : 'Unknown error');
+      throw error;
     }
   }
 };

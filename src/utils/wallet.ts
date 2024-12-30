@@ -13,8 +13,6 @@ export function checkWalletExists(): boolean {
 
 export function checkWalletEncoded(): boolean {
   try {
-    
-    // Check for either DEPLOY_KEY or DEPLOY_KEY64
     const deployKey = process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
     
     if (!deployKey) {
@@ -22,12 +20,11 @@ export function checkWalletEncoded(): boolean {
       console.log('Available environment variables:', Object.keys(process.env));
       return false;
     }
-    // Try to decode and parse the wallet to verify it's valid
     const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
     return true;
-  } catch (e) {
-    console.log('Error validating wallet key:', e);
+  } catch {
+    console.log('Error validating wallet key');
     return false;
   }
 }
@@ -41,7 +38,7 @@ export function checkWalletInGitignore(): boolean {
     return gitignoreContent.split('\n').some(line => 
       line.trim() === 'wallet.json' || line.trim() === '/wallet.json'
     );
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -174,7 +171,7 @@ export const validateDeployKey = (): boolean => {
     const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
     return true;
-  } catch {
-    return false;
+  } catch (error: unknown) {
+    throw new Error('Failed to decode wallet data: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };

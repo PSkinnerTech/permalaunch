@@ -15,7 +15,7 @@ This document outlines the manual testing steps to be performed before each rele
   - [ ] Verifies wallet.json existence
   - [ ] Validates DEPLOY_KEY format
   - [ ] Validates .env file exists in the root of the project
-  - [ ] If .env file is missing, creates it in the root of the project
+  - [ ] If .env file is missing, asks the user if they want the .env created for them. If yes, creates it in the root of the project
   - [ ] If wallet.json is found, but can't validate the DEPLOY_KEY, encodes the wallet.json and sets DEPLOY_KEY in the .env file
   - [ ] Confirms wallet address is valid
   - [ ] Shows appropriate error messages
