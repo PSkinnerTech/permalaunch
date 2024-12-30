@@ -174,7 +174,7 @@ export const validateDeployKey = (): boolean => {
     const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
     return true;
-  } catch {
-    return false;
+  } catch (error: unknown) {
+    throw new Error('Failed to decode wallet data: ' + (error instanceof Error ? error.message : 'Unknown error'));
   }
 };

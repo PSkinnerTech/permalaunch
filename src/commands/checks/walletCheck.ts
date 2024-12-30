@@ -68,8 +68,8 @@ export async function runWalletCheck(): Promise<CheckResult> {
       success: true, 
       message: 'All wallet checks passed' 
     };
-  } catch (error) {
-    console.error(formatError('\nError during wallet check:'), error);
+  } catch (error: unknown) {
+    console.error(formatError('\nError during wallet check:'), error instanceof Error ? error.message : 'Unknown error');
     return { 
       success: false, 
       message: error instanceof Error ? error.message : 'Unknown error during wallet check' 
