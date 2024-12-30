@@ -141,3 +141,40 @@ const validateWalletFile = async (_filePath: string): Promise<boolean> => {
 };
 
 export { validateWalletFile as _validateWalletFile };
+
+export const validateEnvFile = async (): Promise<boolean> => {
+  const envPath = path.join(process.cwd(), '.env');
+  if (!fs.existsSync(envPath)) {
+    const { createEnv } = await inquirer.prompt([{
+      type: 'confirm',
+      name: 'createEnv',
+      message: '.env file not found. Would you like to create it?',
+      default: false
+    }]);
+
+    if (createEnv) {
+      try {
+        fs.writeFileSync(envPath, '', { mode: 0o600 });
+        return true;
+      } catch (error) {
+        console.error(formatError('Error creating .env file:'), error);
+        return false;
+      }
+    }
+    return false;
+  }
+  return true;
+};
+
+export const validateDeployKey = (): boolean => {
+  const deployKey = process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
+  if (!deployKey) return false;
+  
+  try {
+    const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
+    JSON.parse(decoded);
+    return true;
+  } catch {
+    return false;
+  }
+};

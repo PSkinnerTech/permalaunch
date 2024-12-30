@@ -21,7 +21,7 @@ When this tool is ready for production, it will be renamed, this CLI will be dep
 
 1. Initialize your deployment key:
 ```bash
-npx permalaunch --init
+npx permalaunch init
 ```
 
 2. Deploy your app:
