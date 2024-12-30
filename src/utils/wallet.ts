@@ -8,7 +8,12 @@ import inquirer from 'inquirer';
 import { formatSuccess, formatError, formatWarning } from './display.js';
 
 export function checkWalletExists(): boolean {
-  return fs.existsSync(path.join(process.cwd(), 'wallet.json'));
+  const dir = process.cwd();
+  const files = fs.readdirSync(dir);
+  
+  return files.some(file => 
+    file === 'wallet.json' || /^keyfile.*\.json$/.test(file)
+  );
 }
 
 export function checkWalletEncoded(): boolean {
