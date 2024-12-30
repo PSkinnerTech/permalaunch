@@ -137,7 +137,7 @@ export const initCommand = {
         if (!parsed.kty || !parsed.n || !parsed.e) {
           throw new Error('Invalid wallet format - not a valid JWK');
         }
-      } catch (error) {
+      } catch {
         console.error(formatError('Invalid wallet file format'));
         return;
       }
