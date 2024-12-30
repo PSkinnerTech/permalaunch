@@ -37,10 +37,10 @@ export async function validateInitStatus(): Promise<ValidationResult> {
     }
 
     return { isValid: true };
-  } catch (error: unknown) {
+  } catch (error) {
     return {
       isValid: false,
-      message: error instanceof Error ? error.message : 'Invalid DEPLOY_KEY format - unable to decode'
+      message: 'Invalid DEPLOY_KEY format - unable to decode'
     };
   }
 } 

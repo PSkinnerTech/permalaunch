@@ -13,8 +13,6 @@ export function checkWalletExists(): boolean {
 
 export function checkWalletEncoded(): boolean {
   try {
-    
-    // Check for either DEPLOY_KEY or DEPLOY_KEY64
     const deployKey = process.env.DEPLOY_KEY || process.env.DEPLOY_KEY64;
     
     if (!deployKey) {
@@ -22,12 +20,11 @@ export function checkWalletEncoded(): boolean {
       console.log('Available environment variables:', Object.keys(process.env));
       return false;
     }
-    // Try to decode and parse the wallet to verify it's valid
     const decoded = Buffer.from(deployKey, 'base64').toString('utf-8');
     JSON.parse(decoded);
     return true;
-  } catch (e) {
-    console.log('Error validating wallet key:', e);
+  } catch (_e) {
+    console.log('Error validating wallet key');
     return false;
   }
 }

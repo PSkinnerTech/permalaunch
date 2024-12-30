@@ -47,8 +47,12 @@ const handleEnvFile = async (base64Key: string): Promise<void> => {
       throw new Error('Cannot proceed without .env file');
     }
     
-    await fs.writeFile(envPath, '', { mode: 0o600 });
-    envExists = true;
+    try {
+      fs.writeFileSync(envPath, '', { mode: 0o600 });
+    } catch (error) {
+      console.error(formatError('Error creating .env file:'), error);
+      throw error;
+    }
   }
 
   let envContent = await fs.readFile(envPath, 'utf-8');
