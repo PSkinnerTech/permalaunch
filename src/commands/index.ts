@@ -6,6 +6,7 @@ import { runAntCheck } from './checks/antCheck.js';
 import { runGitCheck } from './checks/gitCheck.js';
 import { launch } from './launch.js';
 import { DeployArgs } from '../types.js';
+import { initCommand } from './init.js';
 
 export async function handleCommands(argv: DeployArgs): Promise<void> {
   if (argv['prelaunch-checklist']) {
@@ -46,8 +47,13 @@ export async function handleCommands(argv: DeployArgs): Promise<void> {
     return;
   }
 
+  if (argv.init) {
+    await initCommand.handler();
+    return;
+  }
+
   if (argv.launch) {
-    await launch(argv);
+    // TODO: Implement launch handler
     return;
   }
 
@@ -55,4 +61,6 @@ export async function handleCommands(argv: DeployArgs): Promise<void> {
     // TODO: Implement quick launch handler
     return;
   }
+
+  console.log('Please specify either --launch, --prelaunch-checklist, or --check-* flag');
 }

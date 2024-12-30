@@ -71,6 +71,11 @@ const argv = yargs(hideBin(process.argv))
     description: 'Run git-specific checks only',
     default: false
   })
+  .option('init', { // Define the init flag
+    type: 'boolean',
+    description: 'Initialize deployment key setup',
+    default: false,
+  })
   .option('help', {
     alias: 'h',
     type: 'boolean',
@@ -80,7 +85,7 @@ const argv = yargs(hideBin(process.argv))
   .epilogue(`\nTo learn more about the \x1b[35mPermalaunch CLI\x1b[0m, visit the documentation at \x1b[35mhttps://permalaunch.ar.io/docs\x1b[0m`)
   .help()
   .alias('help', 'h')
-  .parse() as unknown as DeployArgs; // Changed from parseSync() to parse()
+  .parseSync() as unknown as DeployArgs; // Adjusted type casting
 
 // Environment variables
 export const DEPLOY_KEY = process.env.DEPLOY_KEY;

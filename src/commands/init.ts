@@ -2,13 +2,11 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import inquirer from 'inquirer';
-import { formatSuccess, formatWarning, formatError } from '../utils/display.js';
-import { runPrelaunchChecklist } from './checks/prelaunchChecklist.js';
-import { DeployArgs } from '../types.js';
+import { formatSuccess, formatWarning } from '../utils/display.js';
 
-const WALLETS_DIR = process.cwd();
+const WALLETS_DIR = process.cwd()
 const ENV_FILE = '.env';
+const GITIGNORE_FILE = '.gitignore';
 
 /**
  * Search for wallet.json or keyfile*.json in the current directory.
@@ -22,71 +20,30 @@ const findWalletFiles = async (): Promise<string[]> => {
 
 /**
  * Base64 encode the content of the wallet file.
+ * @param content - The content of the wallet file.
+ * @returns The Base64 encoded string.
  */
-const encodeWalletToBase64 = async (walletPath: string): Promise<string> => {
-  const walletContent = await fs.readFile(walletPath, 'utf-8');
-  return Buffer.from(walletContent).toString('base64');
-};
+const _encodeBase64 = (data: string): string => Buffer.from(data).toString('base64');
 
 /**
- * Check and update .env file
+ * Update or create the .env file with the DEPLOY_KEY.
+ * @param base64Key - The Base64 encoded wallet key.
  */
-const handleEnvFile = async (base64Key: string): Promise<void> => {
+const updateEnvFile = async (base64Key: string): Promise<void> => {
   const envPath = path.join(WALLETS_DIR, ENV_FILE);
-  let envExists = await fs.pathExists(envPath);
-  
-  if (!envExists) {
-    const { createEnv } = await inquirer.prompt([{
-      type: 'confirm',
-      name: 'createEnv',
-      message: '.env file not found. Would you like to create it?',
-      default: true
-    }]);
+  let envContent = '';
 
-    if (!createEnv) {
-      throw new Error('Cannot proceed without .env file');
+  try {
+    envContent = await fs.readFile(envPath, 'utf-8');
+    // Check if DEPLOY_KEY already exists
+    if (envContent.includes('DEPLOY_KEY=')) {
+      console.warn('Existing DEPLOY_KEY found in .env file. The key will be updated.');
     }
-    
-    await fs.writeFile(envPath, '', { mode: 0o600 });
-    envExists = true;
-  }
-
-  let envContent = await fs.readFile(envPath, 'utf-8');
-  const hasDeployKey = envContent.includes('DEPLOY_KEY=');
-
-  if (hasDeployKey) {
-    const { updateKey } = await inquirer.prompt([{
-      type: 'confirm',
-      name: 'updateKey',
-      message: 'DEPLOY_KEY already exists in .env. Would you like to update it?',
-      default: false
-    }]);
-
-    if (!updateKey) {
-      console.log(formatSuccess('permalaunch initialized'));
-      const { runChecklist } = await inquirer.prompt([{
-        type: 'confirm',
-        name: 'runChecklist',
-        message: 'Would you like to run the prelaunch checklist?',
-        default: true
-      }]);
-
-      if (runChecklist) {
-        await runPrelaunchChecklist({ 'prelaunch-checklist': true } as DeployArgs);
-      }
-      return;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw error;
     }
-  }
-
-  const { confirmEncode } = await inquirer.prompt([{
-    type: 'confirm',
-    name: 'confirmEncode',
-    message: 'Would you like to encode your wallet?',
-    default: true
-  }]);
-
-  if (!confirmEncode) {
-    return;
+    // .env does not exist, will create it
   }
 
   const deployKeyLine = `DEPLOY_KEY="${base64Key}"`;
@@ -95,8 +52,75 @@ const handleEnvFile = async (base64Key: string): Promise<void> => {
   const newEnvContent = lines.join('\n') + '\n';
 
   await fs.writeFile(envPath, newEnvContent, { mode: 0o600 });
-  console.log(formatSuccess('Your wallet has been encoded and stored in your .env file as DEPLOY_KEY.'));
 };
+
+/**
+ * Check if .env and wallet files are in .gitignore.
+ * @param walletFile - The wallet file name.
+ */
+const checkGitignore = async (walletFile: string): Promise<void> => {
+  const gitignorePath = path.join(WALLETS_DIR, GITIGNORE_FILE);
+  let gitignoreContent = '';
+
+  try {
+    gitignoreContent = await fs.readFile(gitignorePath, 'utf-8');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      console.warn(formatWarning(`.gitignore file not found. Please add '${ENV_FILE}' and '${walletFile}' to .gitignore.`));
+      return;
+    }
+    throw error;
+  }
+
+  const entries = [ENV_FILE, walletFile];
+  entries.forEach((entry) => {
+    if (!gitignoreContent.includes(entry)) {
+      console.warn(formatWarning(`Please add '${entry}' to your .gitignore file.`));
+    }
+  });
+};
+
+/**
+ * Initialize deployment key setup.
+ */
+// const init = async (): Promise<void> => {
+//   try {
+//     const walletFiles = await findWalletFiles();
+
+//     if (walletFiles.length === 0) {
+//       console.log(
+//         formatWarning(
+//           'No Wallet Found. Please add your exported wallet file to the root of the project. Be sure to add the wallet to .gitignore immediately after.'
+//         )
+//       );
+//       return;
+//     }
+
+//     if (walletFiles.length > 1) {
+//       console.warn(
+//         formatWarning(
+//           'Multiple wallet files found. Please ensure only one wallet file is present.'
+//         )
+//       );
+//       return;
+//     }
+
+//     const walletFile = walletFiles[0];
+//     const walletPath = path.join(WALLETS_DIR, walletFile);
+//     const walletContent = await fs.readFile(walletPath, 'utf-8');
+//     const base64Key = encodeBase64(walletContent);
+
+//     await updateEnvFile(base64Key);
+//     await checkGitignore(walletFile);
+
+//     console.log(formatSuccess('DEPLOY_KEY has been set successfully in .env file.'));
+//   } catch (error) {
+//     console.error(
+//       formatError(`Initialization failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+//     );
+//     process.exit(1);
+//   }
+// };
 
 /**
  * Exported handler for the init command.
@@ -108,41 +132,41 @@ export const initCommand = {
     try {
       const walletFiles = await findWalletFiles();
       
-      if (walletFiles.length === 0) {
-        console.log(formatWarning(
-          'No wallet file found. Please add your wallet.json or keyfile*.json to the project root.'
-        ));
-        return;
-      }
-
       if (walletFiles.length > 1) {
-        console.warn(formatWarning(
-          'Multiple wallet files found. Please ensure only one wallet file exists in the project root.'
-        ));
+        console.warn('Multiple wallet files found. Please ensure only one wallet file exists in the project root.');
         return;
       }
 
-      const walletPath = path.join(WALLETS_DIR, walletFiles[0]);
+      if (walletFiles.length === 0) {
+        console.log('No Wallet Found. Please add your exported wallet file to the root of the project. Be sure to add the wallet to .gitignore immediately after.');
+        return;
+      }
+
+      const walletPath = path.join(process.cwd(), walletFiles[0]);
+      let walletContent;
       
       try {
-        // Validate wallet file format
-        const walletContent = await fs.readFile(walletPath, 'utf-8');
+        walletContent = await fs.readFile(walletPath, 'utf-8');
         const parsed = JSON.parse(walletContent);
         
-        // Check for JWK format (Arweave wallet)
-        if (!parsed.kty || !parsed.n || !parsed.e) {
-          throw new Error('Invalid wallet format - not a valid JWK');
+        // Validate wallet structure
+        if (!parsed.privateKey) {
+          console.error('Initialization failed: Invalid wallet format - missing privateKey');
+          return;
         }
       } catch (error) {
-        console.error(formatError('Invalid wallet file format'));
+        console.error('Initialization failed: Invalid wallet file format');
         return;
       }
 
-      const base64Key = await encodeWalletToBase64(walletPath);
-      await handleEnvFile(base64Key);
+      const base64Key = Buffer.from(walletContent, 'utf-8').toString('base64');
+      await updateEnvFile(base64Key);
+      await checkGitignore(walletFiles[0]);
 
+      console.log(formatSuccess('DEPLOY_KEY has been set successfully in .env file.'));
+      console.log(formatWarning('\nIMPORTANT: Keep your wallet file secure and never commit it to version control.'));
     } catch (error) {
-      console.error(formatError(`Initialization failed: ${(error as Error).message}`));
+      console.error(`Initialization failed: ${(error as Error).message}`);
     }
   }
 };
