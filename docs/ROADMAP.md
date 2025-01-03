@@ -5,6 +5,7 @@
 - [x] `--prelaunch-checklist` comprehensive deployment readiness check (2024-12-19)
 - [x] Individual check commands:
   - [x] `--check-wallet` (2024-12-19)
+    - [x] Enhanced wallet detection for keyfile*.json (2024-12-26)
   - [x] `--check-balances` (2024-12-19)
   - [x] `--check-build` (2024-12-19)
   - [x] `--check-ant` (2024-12-19)
@@ -14,6 +15,7 @@
   - [x] Secure .env file creation
   - [x] File permission handling
   - [x] Comprehensive validation
+  - [x] Improved UX for wallet encoding (2024-12-26)
 - [x] Optimize `--launch` command:
   - [x] Make GIT HASH optional (2024-12-19)
   - [x] Make ANT PROCESS optional (2024-12-19)
@@ -30,25 +32,25 @@
   - [ ] Complete test coverage (moved to Short-term Goals)
 
 ## Short-term Goals
-- [ ] Complete security test implementation
-  - [ ] Fix Jest mock type issues
-  - [ ] Add proper fs mocking setup
-  - [ ] Complete test coverage for security utils
-- [ ] Complete balance check test implementation
-  - [ ] Fix TypeScript mock issues
-  - [ ] Add edge case coverage
-  - [ ] Improve error scenario testing
-- [ ] Add automated code quality checks
-  - [ ] ESLint configuration
-  - [ ] Prettier setup
-  - [ ] Breaking change detection
-- [ ] Implement security best practices
-  - [ ] API key management
-  - [ ] Wallet operation patterns
-  - [ ] ANT security guidelines
-- [ ] Add comprehensive test suite
-- [ ] Upload to npm
-- [ ] Add CI/CD pipeline
+- [x] Complete security test implementation
+  - [x] Fix Jest mock type issues
+  - [x] Add proper fs mocking setup
+  - [x] Complete test coverage for security utils
+- [x] Complete balance check test implementation
+  - [x] Fix TypeScript mock issues
+  - [x] Add edge case coverage
+  - [x] Improve error scenario testing
+- [x] Add automated code quality checks
+  - [x] ESLint configuration
+  - [x] Prettier setup
+  - [x] Breaking change detection
+- [x] Implement security best practices
+  - [x] API key management
+  - [x] Wallet operation patterns
+  - [x] ANT security guidelines
+- [x] Add comprehensive test suite
+- [x] Upload to npm
+- [x] Add CI/CD pipeline
 - [ ] Develop a `--configure-ant` wizard for easily selecting ARNS domains
 - [ ] Add support for custom manifest configurations
 - [ ] Implement deployment progress bar
