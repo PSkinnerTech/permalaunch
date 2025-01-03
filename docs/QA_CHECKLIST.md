@@ -4,11 +4,11 @@ This document outlines the manual testing steps to be performed before each rele
 
 ## Core Commands
 - [ ] `--help` displays comprehensive CLI documentation
-- [ ] `--init` command
-  - [ ] Detects existing wallet.json
-  - [ ] Creates .env file with proper permissions
-  - [ ] Validates wallet configuration
-  - [ ] Handles errors gracefully (missing files, invalid wallet)
+- [x] `init` command
+  - [x] Detects existing wallet.json
+  - [x] Creates .env file with proper permissions
+  - [x] Validates wallet configuration
+  - [x] Handles errors gracefully (missing files, invalid wallet)
 
 ## Check Commands
 - [ ] `--check-wallet`

@@ -5,13 +5,25 @@ import {
   formatSuccess, 
   formatError, 
   formatWarning,
+  formatHighlight,
   delay
 } from '../../utils/index.js';
 import { CheckResult } from './index.js';
 
 export async function runAntCheck(antProcess?: string, undername: string = '@'): Promise<CheckResult> {
-  // Only run if ANT process is provided
+  console.log('\n\x1b[35mCHECK ANT:\x1b[0m');
+
+  // If no ANT process provided, show the informative message
   if (!antProcess) {
+    console.log(formatWarning('[   ] No ANT Process configured'));
+    console.log(formatWarning('\nThe ANT isn\'t required to deploy your app onto Arweave, but you should understand'));
+    console.log(formatWarning('that your app\'s url will look something like:'));
+    console.log(formatError('https://arweave.net/[very-long-hash]'));
+    console.log(formatWarning('rather than something like:'));
+    console.log(formatHighlight('https://your-app.ar.io'));
+    console.log(formatWarning('\nTo learn more about ANTs and get your own domain, visit:'));
+    console.log(formatHighlight('https://ar.io/docs\n'));
+    
     return {
       success: true,
       message: 'ANT check skipped - no ANT process provided'
