@@ -35,7 +35,7 @@ export async function handleCommands(argv: DeployArgs): Promise<void> {
   }
 
   if (argv['check-ant']) {
-    const result = await runAntCheck(argv.antProcess, argv.undername);
+    const result = await runAntCheck();
     console.log(result);
     return;
   }

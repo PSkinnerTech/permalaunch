@@ -58,7 +58,7 @@ export async function runPrelaunchChecklist(argv: DeployArgs): Promise<Prelaunch
     const antProcess = argv.antProcess || process.env.ANT_PROCESS;
     if (antProcess) {
       console.log('\n\x1b[35mCHECK ANT:\x1b[0m');
-      results.ant = await runAntCheck(antProcess, argv.undername);
+      results.ant = await runAntCheck();
     } else {
       console.log('\n\x1b[35mCHECK ANT:\x1b[0m');
       console.log(formatWarning('[   ] No ANT Process configured'));
